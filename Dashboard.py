@@ -3,7 +3,7 @@ import pandas as pd
 import yfinance as yf
 import requests
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.metrics import mean_squared_error
 import plotly.express as px
 from sklearn.preprocessing import StandardScaler
@@ -112,32 +112,24 @@ def clean_transform_data(data):
 
     return preprocessor.fit_transform(data)
 
-# Predict sales using Linear Regression
+# Improved prediction model using Ridge Regression
 def predict_sales(data):
     data = clean_transform_data(data)
     X = data[:, :-1]  # All columns except the last one
     y = data[:, -1]  # Last column is the target
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    model = LinearRegression()
+    model = Ridge(alpha=1.0)
     model.fit(X_train, y_train)
     predictions = model.predict(X_test)
     mse = mean_squared_error(y_test, predictions)
     return model, predictions, mse, X_test, y_test
 
 # Plot sales predictions
-def plot_predictions(model, data, view):
-    if view == 'Yearly':
-        data_grouped = data.groupby('Year').mean().reset_index()
-        fig = px.line(data_grouped, x='Year', y='Sales', title='Yearly Sales Prediction')
-        fig.add_scatter(x=data_grouped['Year'], y=model.predict(data_grouped[['Year', 'Year', 'Year']]), mode='lines', name='Predicted Sales')
-    elif view == 'Monthly':
-        data_grouped = data.groupby(['Year', 'Month']).mean().reset_index()
-        fig = px.line(data_grouped, x=data_grouped.index, y='Sales', title='Monthly Sales Prediction')
-        fig.add_scatter(x=data_grouped.index, y=model.predict(data_grouped[['Year', 'Month', 'Month']]), mode='lines', name='Predicted Sales')
-    else:  # Daily
-        fig = px.line(data, x='Date', y='Sales', title='Daily Sales Prediction')
-        fig.add_scatter(x=data['Date'], y=model.predict(data[['Year', 'Month', 'Day']]), mode='lines', name='Predicted Sales')
+def plot_predictions(model, data, year):
+    data_filtered = data[data['Year'] == year]
+    fig = px.line(data_filtered, x='Date', y='Sales', title=f'Daily Sales Prediction for {year}')
+    fig.add_scatter(x=data_filtered['Date'], y=model.predict(data_filtered[['Year', 'Month', 'Day']]), mode='lines', name='Predicted Sales')
     fig.update_layout(hovermode='x unified')
     st.plotly_chart(fig)
 
@@ -159,22 +151,19 @@ ticker = companies[company]
 
 col1, col2, col3 = st.columns([3, 1.5, 1.5])
 
-# First column: Sales Prediction, View Filter, Year-wise Filter, and Data Display
+# First column: Sales Prediction, Year-wise Filter, and Data Display
 with col1:
     st.subheader("Sales Prediction")
     sales_data = load_sales_data(ticker)
     model, predictions, mse, X_test, y_test = predict_sales(sales_data)
     
-    view = st.selectbox("Select View", ["Yearly", "Monthly", "Daily"])
-    plot_predictions(model, sales_data, view)
-    
     st.subheader("Year-wise Filter")
     year_filter = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
-    filtered_data = sales_data[sales_data['Year'] == year_filter]
-    st.write(filtered_data)
+    plot_predictions(model, sales_data, year_filter)
     
     st.subheader("Sales Data")
-    st.dataframe(sales_data, height=200)
+    filtered_data = sales_data[sales_data['Year'] == year_filter]
+    st.dataframe(filtered_data, height=200)
 
 # Second column: Selected Company's About and Performance
 with col2:

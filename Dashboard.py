@@ -6,6 +6,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 #Create a ticker-dropdown
 
+
 # Load CSS file
 def load_css(file_name):
     with open(file_name) as f:
@@ -14,7 +15,13 @@ def load_css(file_name):
 # Load CSS
 load_css("styles.css")
 
-# Streamlit UI with a big box covering the entire page
+# Streamlit UI with two vertical parts
 st.markdown('<div class="container_primary">', unsafe_allow_html=True)
-st.markdown('Big Box Content', unsafe_allow_html=True)
+
+# Left division
+st.markdown('<div class="left-box">Left Box Content</div>', unsafe_allow_html=True)
+
+# Right division
+st.markdown('<div class="right-box">Right Box Content</div>', unsafe_allow_html=True)
+
 st.markdown('</div>', unsafe_allow_html=True)

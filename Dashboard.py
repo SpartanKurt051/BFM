@@ -86,13 +86,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-# Load CSS file
-def load_css(styles):
-    with open(styles) as f:
+def load_css(file_name):
+    with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # Load CSS
-load_css("style.css")
+load_css("styles.css")
 
 # Define functions to fetch data
 def fetch_stock_data(ticker):

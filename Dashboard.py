@@ -62,6 +62,17 @@ def fetch_live_news(api_key, query):
     news_data = response.json()
     return news_data['articles'] if 'articles' in news_data else []
 
+def fetch_eps_pe_ipo_kpi(ticker):
+    stock = yf.Ticker(ticker)
+    info = stock.info
+    data = {
+        "EPS": info.get("trailingEps"),
+        "PE Ratio": info.get("trailingPE"),
+        "IPO Date": info.get("ipoDate"),
+        "KPI": info.get("kpi")
+    }
+    return data
+
 # Energy companies and their ticker symbols
 companies = {
     "Adani Energy": "ADANIGREEN.NS",
@@ -102,7 +113,10 @@ with col2:
     st.text_area("Live News", news_text, height=300)
 
     st.subheader(f"{company} EPS, PE, IPO KPI")
-    df_fundamental = fetch_fundamental_data(ticker)
-    st.dataframe(df_fundamental)
+    eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
+    st.write(f"**EPS**: {eps_pe_ipo_kpi['EPS']}")
+    st.write(f"**PE Ratio**: {eps_pe_ipo_kpi['PE Ratio']}")
+    st.write(f"**IPO Date**: {eps_pe_ipo_kpi['IPO Date']}")
+    st.write(f"**KPI**: {eps_pe_ipo_kpi['KPI']}")
 
 st.write("Data fetched successfully! Use this for further analysis and prediction.")

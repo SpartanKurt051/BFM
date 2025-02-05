@@ -90,7 +90,7 @@ def load_sales_data(ticker):
     return hist
 
 # Data cleaning and transformation
-def clean_transform_data(data):
+def clean_transform_data(data, include_sales=True):
     # Handle missing values
     data = data.dropna()
 
@@ -101,10 +101,13 @@ def clean_transform_data(data):
     data['Year'] = data['Year'].astype(int)
     data['Month'] = data['Month'].astype(int)
     data['Day'] = data['Day'].astype(int)
-    data['Sales'] = data['Sales'].astype(float)
+    if include_sales:
+        data['Sales'] = data['Sales'].astype(float)
 
     # Normalize numerical features
-    numerical_features = data.columns.difference(['Date'])
+    numerical_features = ['Year', 'Month', 'Day']
+    if include_sales:
+        numerical_features.append('Sales')
     numerical_transformer = StandardScaler()
 
     # Combine transformations
@@ -141,14 +144,22 @@ def predict_sales(data):
             best_mse = mse
             best_model = model
     
-    return best_model, best_mse
+    # Predict sales for 26th January 2025
+    next_day = pd.DataFrame({
+        'Year': [2025],
+        'Month': [1],
+        'Day': [26]
+    })
+    next_day = clean_transform_data(next_day, include_sales=False)
+    next_day_sales = best_model.predict(next_day)[0]
+    
+    return best_model, best_mse, next_day_sales
 
 # Plot sales predictions
-def plot_predictions(model, data, year):
-    data_filtered = data[data['Year'] == year]
-    fig = px.line(data_filtered, x='Date', y='Sales', title=f'Daily Sales Prediction for {year}')
-    fig.add_scatter(x=data_filtered['Date'], y=model.predict(data_filtered[['Year', 'Month', 'Day', 'Sales']]), mode='lines', name='Predicted Sales')
-    fig.update_layout(hovermode='x unified')
+def plot_predictions(model, data):
+    fig = px.line(data, x='Date', y='Sales', title='Sales Prediction')
+    fig.add_scatter(x=data['Date'], y=model.predict(data[['Year', 'Month', 'Day', 'Sales']]), mode='lines', name='Predicted Sales', line=dict(color='orange'))
+    fig.update_layout(hovermode='x unified', plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font=dict(color='white'))
     st.plotly_chart(fig)
 
 # Energy companies and their ticker symbols
@@ -169,34 +180,22 @@ ticker = companies[company]
 
 col1, col2, col3 = st.columns([3, 1.5, 1.5])
 
-# First column: Sales Prediction, Year-wise Filter, and Data Display
+# First column: Sales Prediction and Data Display
 with col1:
     st.subheader("Sales Prediction")
     sales_data = load_sales_data(ticker)
-    model, mse = predict_sales(sales_data)
-    next_day = pd.DataFrame({
-        'Year': [2025],
-        'Month': [1],
-        'Day': [26],
-        'Sales': [0]  # Placeholder value for Sales
-    })
-    next_day = clean_transform_data(next_day)
-    next_day_sales = model.predict(next_day)[0]
+    model, mse, next_day_sales = predict_sales(sales_data)
     st.write(f"Predicted Sales for 26th Jan 2025: {next_day_sales}")
     
-    st.subheader("Year-wise Filter")
-    year_filter = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
-    plot_predictions(model, sales_data, year_filter)
-    
     st.subheader("Sales Data")
-    filtered_data = sales_data[sales_data['Year'] == year_filter]
-    st.dataframe(filtered_data, height=200)
+    st.dataframe(sales_data, height=200)
+    plot_predictions(model, sales_data)
 
 # Second column: Selected Company's About and Performance
 with col2:
     st.subheader(f"About {company}")
     company_info = fetch_company_info(ticker)
-    st.write(company_info)
+    st.write(f"<div style='text-align: left;'>{company_info}</div>", unsafe_allow_html=True)
 
     st.subheader(f"{company} Performance")
     df_stock = fetch_stock_data(ticker)
@@ -211,12 +210,12 @@ with col3:
     news_articles = fetch_live_news(news_api_key, query)
     news_text = ""
     for article in news_articles:
-        news_text += f"**{article['title']}**\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
+        news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
     st.text_area("Live News", news_text, height=150)
 
     st.subheader(f"{company} EPS, PE, IPO KPI")
     eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-    kpi_info = f"**EPS**: {eps_pe_ipo_kpi['EPS']}  |  **PE Ratio**: {eps_pe_ipo_kpi['PE Ratio']}  |  **IPO Date**: {eps_pe_ipo_kpi['IPO Date']}  |  **KPI**: {eps_pe_ipo_kpi['KPI']}"
+    kpi_info = f"*EPS: {eps_pe_ipo_kpi['EPS']}  |  **PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}  |  **IPO Date: {eps_pe_ipo_kpi['IPO Date']}  |  **KPI*: {eps_pe_ipo_kpi['KPI']}"
     st.write(kpi_info)
 
-st.write("Data fetched successfully! Use this for further analysis and prediction.")
+st.write("Data fetched successfully! Use this for further analysis and prediction.")  

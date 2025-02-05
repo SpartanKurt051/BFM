@@ -3,7 +3,7 @@
 /* Big box styling */
 .big-box {
     height: 100vh; /* Full viewport height */
-    width: 100%; /* Full viewport width */
+    width: 10000px; /* Full viewport width */
     border: 1px solid #0000FF; /* Blue border */
     padding: 20px;
     border-radius: 5px;

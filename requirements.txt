@@ -3,7 +3,6 @@ pandas
 scikit-learn
 yfinance
 plotly
-datetime
 numpy
 seaborn
 matplotlib

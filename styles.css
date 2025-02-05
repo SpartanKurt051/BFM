@@ -9,6 +9,9 @@
     font-size: 1.2em;               /* Larger font size */
 }
 /* Container to hold left and right boxes */
+/* styles.css */
+
+/* Container to hold left and right boxes */
 .horizontal-container {
     display: flex;
     flex-direction: row;
@@ -17,19 +20,7 @@
 }
 
 /* Left and right box styling */
-.left-box {
-    flex: 1; /* Each box takes up equal space */
-    border: 1px solid #000; /* Black border */
-    padding: 20px;
-    border-radius: 5px;
-    background-color: #f9f9f9; /* Light grey background */
-    text-align: center;
-    font-weight: bold;
-    font-size: 1.2em;
-    margin-right: 10px; /* Space between boxes */
-}
-
-.right-box {
+.left-box, .right-box {
     flex: 1; /* Each box takes up equal space */
     border: 1px solid #0000FF; /* Blue border */
     padding: 20px;
@@ -38,6 +29,7 @@
     text-align: center;
     font-weight: bold;
     font-size: 1.2em;
+    margin-right: 10px; /* Space between boxes */
 }
 
 /* Placeholder styling */

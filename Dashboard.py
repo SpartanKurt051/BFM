@@ -36,7 +36,7 @@ def fetch_fundamental_data(ticker):
     for date in dates:
         try:
             total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index) else None
+            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance[...]
             net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
         except Exception:
             total_revenue, debt_to_equity, net_cashflow = None, None, None
@@ -67,7 +67,8 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "EPS": info.get("trailingEps"),
         "PE Ratio": info.get("trailingPE"),
         "IPO Date": info.get("ipoDate"),
-        "KPI": info.get("kpi")
+        "KPI": info.get("kpi"),
+        "Current Price": info.get("regularMarketPrice")
     }
     return data
 
@@ -191,7 +192,7 @@ with col2:
 
     st.subheader(f"{company} Performance")
     df_stock = fetch_stock_data(ticker)
-    st.dataframe(df_stock.tail(10))
+    st.slider("Volume Traded", min_value=int(df_stock['Volume'].min()), max_value=int(df_stock['Volume'].max()), value=int(df_stock['Volume'].mean()), step=1)
 
 # Third column: Live NEWS and EPS, PE, IPO KPI
 news_api_key = "31739ed855eb4759908a898ab99a43e7"
@@ -207,7 +208,7 @@ with col3:
 
     st.subheader(f"{company} EPS, PE, IPO KPI")
     eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-    kpi_info = f"*EPS: {eps_pe_ipo_kpi['EPS']}  |  **PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}  |  **IPO Date: {eps_pe_ipo_kpi['IPO Date']}  |  **KPI*: {eps_pe_ipo_kpi['KPI']}"
+    kpi_info = f"*EPS: {eps_pe_ipo_kpi['EPS']}  |  **PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}  |  **IPO Date: {eps_pe_ipo_kpi['IPO Date']}  |  **KPI*: {eps_pe_ipo_kpi['KPI']}  |  **Current Price*: {eps_pe_ipo_kpi['Current Price']}"
     st.write(kpi_info)
 
 st.write("Data fetched successfully! Use this for further analysis and prediction.")

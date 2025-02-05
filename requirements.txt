@@ -6,4 +6,5 @@ plotly
 numpy
 seaborn
 matplotlib
+tensorflow
 requests

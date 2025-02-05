@@ -35,7 +35,7 @@ def fetch_fundamental_data(ticker):
     for date in dates:
         try:
             total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index) else None
+            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance[...]
             net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
         except Exception:
             total_revenue, debt_to_equity, net_cashflow = None, None, None
@@ -135,11 +135,11 @@ def make_predictions(model, X_test, scaler):
     return predictions
 
 # Plot predictions
-def plot_predictions(actual_prices, predictions, title):
+def plot_predictions(dates, actual_prices, predictions, title):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(y=actual_prices.flatten(), mode="lines", name="Actual Price"))
-    fig.add_trace(go.Scatter(y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
-    fig.update_layout(title=title, xaxis_title="Days", yaxis_title="Price (₹)", template="plotly_dark")
+    fig.add_trace(go.Scatter(x=dates, y=actual_prices.flatten(), mode="lines", name="Actual Price"))
+    fig.add_trace(go.Scatter(x=dates, y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
+    fig.update_layout(title=title, xaxis_title="Date", yaxis_title="Price (₹)", template="plotly_dark")
     st.plotly_chart(fig)
 
 # Main function
@@ -175,16 +175,14 @@ def main():
         predictions = make_predictions(model, X_test, scaler)
         actual_prices = scaler.inverse_transform(y_test.reshape(-1, 1))
 
-        st.subheader("Year-wise Filter")
-        year_filter = st.selectbox("Select Year", sorted(opening_price_data['Year'].unique()))
-        yearly_data = opening_price_data[opening_price_data['Year'] == year_filter]
-        yearly_actual_prices = actual_prices[yearly_data.index[:len(actual_prices)]]
-        yearly_predictions = predictions[yearly_data.index[:len(predictions)]]
+        # Generate dates for the entire period
+        dates = pd.date_range(start="2020-01-01", end="2025-01-26", freq='D')
 
-        plot_predictions(yearly_actual_prices, yearly_predictions, f"Daily Opening Price Prediction for {year_filter}")
-        
+        # Plot the predictions
+        plot_predictions(dates[:len(predictions)], actual_prices, predictions, "Daily Opening Price Prediction")
+
         st.subheader("Opening Price Data")
-        filtered_data = opening_price_data[opening_price_data['Year'] == year_filter]
+        filtered_data = opening_price_data[opening_price_data['Year'] == 2025]
         st.dataframe(filtered_data, height=200)
 
     with col2:
@@ -194,11 +192,8 @@ def main():
 
         st.subheader(f"{company} Performance")
         df_stock = fetch_stock_data(ticker)
-        year_data = df_stock[df_stock.index.year == year_filter]
-        year_data['Volume'].fillna(0, inplace=True)  # Fill missing values with zero
-        year_data['Volume'] = year_data['Volume'].astype(int)  # Ensure the data type is integer
-        #if not year_data.empty:  # Check if year_data is not empty
-            #st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
+        year_data = df_stock[df_stock.index.year == 2025]
+        st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
 
     with col3:
         st.subheader("Live News")

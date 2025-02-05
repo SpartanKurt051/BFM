@@ -149,8 +149,23 @@ def plot_predictions(dates, actual_prices, predictions, current_price, title):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=dates, y=actual_prices.flatten(), mode="lines", name="Actual Price"))
     fig.add_trace(go.Scatter(x=dates, y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
-    fig.add_trace(go.Scatter(x=[dates[-1]], y=[current_price], mode="markers", name="Current Price", marker=dict(color="green", size=10)))
-    fig.update_layout(title=title, xaxis_title="Date", yaxis_title="Price (₹)", template="plotly_dark")
+    fig.update_layout(
+        title=title,
+        xaxis_title="Date",
+        yaxis_title="Price (₹)",
+        template="plotly_dark",
+        annotations=[
+            dict(
+                x=0.5,
+                y=1.1,
+                xref="paper",
+                yref="paper",
+                text=f"Current Stock Price: ₹{current_price:.2f}",
+                showarrow=False,
+                font=dict(size=14, color="green")
+            )
+        ]
+    )
     st.plotly_chart(fig)
 
 # Main function

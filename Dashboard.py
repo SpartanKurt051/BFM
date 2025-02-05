@@ -8,7 +8,6 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 import requests
-
 import streamlit as st
 import pandas as pd
 import yfinance as yf
@@ -95,10 +94,15 @@ st.sidebar.header("Select Company")
 company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
 ticker = companies[company]
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns([1, 2, 2])
+
+# Dummy data column
+with col1:
+    st.subheader("Dummy Data")
+    st.write("This is some dummy data.")
 
 # First column: Selected Company's About and Performance
-with col1:
+with col2:
     st.subheader(f"About {company}")
     company_info = fetch_company_info(ticker)
     st.write(company_info)
@@ -111,7 +115,7 @@ with col1:
 news_api_key = "31739ed855eb4759908a898ab99a43e7"
 query = company
 
-with col2:
+with col3:
     st.subheader("Live News")
     news_articles = fetch_live_news(news_api_key, query)
     news_text = ""
@@ -123,3 +127,5 @@ with col2:
     eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
     kpi_info = f"**EPS**: {eps_pe_ipo_kpi['EPS']}  |  **PE Ratio**: {eps_pe_ipo_kpi['PE Ratio']}  |  **IPO Date**: {eps_pe_ipo_kpi['IPO Date']}  |  **KPI**: {eps_pe_ipo_kpi['KPI']}"
     st.write(kpi_info)
+
+st.write("Data fetched successfully! Use this for further analysis and prediction.")

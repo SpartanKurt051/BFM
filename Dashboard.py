@@ -8,10 +8,15 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 import requests
+
 import streamlit as st
 import pandas as pd
 import yfinance as yf
 import requests
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
 
 def load_css(file_name):
     with open(file_name) as f:
@@ -78,6 +83,33 @@ def fetch_company_info(ticker):
     summary = info.get("longBusinessSummary", "No information available.")
     return summary
 
+# Load sales data for prediction
+def load_sales_data(file_path):
+    sales_data = pd.read_csv(file_path)
+    return sales_data
+
+# Predict sales using Linear Regression
+def predict_sales(data):
+    X = data[['Year']]
+    y = data['Sales']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    predictions = model.predict(X_test)
+    mse = mean_squared_error(y_test, predictions)
+    return model, predictions, mse, X_test, y_test
+
+# Plot sales predictions
+def plot_predictions(model, data):
+    plt.figure(figsize=(10, 5))
+    plt.scatter(data['Year'], data['Sales'], color='blue', label='Actual Sales')
+    plt.plot(data['Year'], model.predict(data[['Year']]), color='red', label='Predicted Sales')
+    plt.xlabel('Year')
+    plt.ylabel('Sales')
+    plt.title('Year-wise Sales Prediction')
+    plt.legend()
+    st.pyplot(plt)
+
 # Energy companies and their ticker symbols
 companies = {
     "Adani Energy": "ADANIGREEN.NS",
@@ -94,14 +126,24 @@ st.sidebar.header("Select Company")
 company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
 ticker = companies[company]
 
-col1, col2, col3 = st.columns([1, 2, 2])
+col1, col2, col3 = st.columns([2, 2, 2])
 
-# Dummy data column
+# First column: Sales Prediction, Year-wise Filter, and CSV Display
 with col1:
-    st.subheader("Dummy Data")
-    st.write("This is some dummy data.")
+    st.subheader("Sales Prediction")
+    sales_data = load_sales_data('sales_data.csv')
+    model, predictions, mse, X_test, y_test = predict_sales(sales_data)
+    plot_predictions(model, sales_data)
+    
+    st.subheader("Year-wise Filter")
+    year_filter = st.slider("Select Year", int(sales_data['Year'].min()), int(sales_data['Year'].max()), (int(sales_data['Year'].min()), int(sales_data['Year'].max())))
+    filtered_data = sales_data[(sales_data['Year'] >= year_filter[0]) & (sales_data['Year'] <= year_filter[1])]
+    st.write(filtered_data)
+    
+    st.subheader("Sales Data CSV")
+    st.dataframe(sales_data, height=200)
 
-# First column: Selected Company's About and Performance
+# Second column: Selected Company's About and Performance
 with col2:
     st.subheader(f"About {company}")
     company_info = fetch_company_info(ticker)
@@ -111,7 +153,7 @@ with col2:
     df_stock = fetch_stock_data(ticker)
     st.dataframe(df_stock.tail(10))
 
-# Second column: Live NEWS and EPS, PE, IPO KPI
+# Third column: Live NEWS and EPS, PE, IPO KPI
 news_api_key = "31739ed855eb4759908a898ab99a43e7"
 query = company
 

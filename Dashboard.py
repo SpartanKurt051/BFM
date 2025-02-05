@@ -7,41 +7,73 @@ from sklearn.metrics import mean_squared_error
 #Create a ticker-dropdown
 
 import streamlit as st
-import pandas as pd
 import yfinance as yf
-import matplotlib.pyplot as plt
+import pandas as pd
 
-# Load CSS file
-def load_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+def fetch_stock_data(ticker):
+    """Fetch historical stock data from 2020 to 2025-01-25 on a daily basis."""
+    df = yf.download(ticker, start="2020-01-01", end="2025-01-25")
+    return df
 
-# Load CSS
-load_css("styles.css")
+def fetch_fundamental_data(ticker):
+    """Fetch fundamental company data for sales prediction on a daily basis."""
+    stock = yf.Ticker(ticker)
+    info = stock.info
+    financials = stock.financials
+    balance_sheet = stock.balance_sheet
+    cashflow = stock.cashflow
+    
+    # Extract relevant financial data on a daily basis
+    dates = pd.date_range(start="2020-01-01", end="2025-01-25", freq='D')
+    fundamental_data = []
+    
+    for date in dates:
+        try:
+            total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
+            debt_to_equity = balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None) if "Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index else None
+            net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
+        except Exception:
+            total_revenue, debt_to_equity, net_cashflow = None, None, None
+        
+        data = {
+            "Date": date,
+            "Market Cap": info.get("marketCap"),
+            "Enterprise Value": info.get("enterpriseValue"),
+            "P/E Ratio": info.get("trailingPE"),
+            "Debt-to-Equity Ratio": debt_to_equity,
+            "Total Revenue": total_revenue,
+            "Net Cash Flow": net_cashflow
+        }
+        fundamental_data.append(data)
+    
+    return pd.DataFrame(fundamental_data)
 
-# Streamlit UI with two graphs side by side
-st.markdown('<div class="container_primary">', unsafe_allow_html=True)
+# Energy companies and their ticker symbols
+companies = {
+    "Adani Energy": "ADANIGREEN.NS",
+    "Tata Power": "TATAPOWER.NS",
+    "Jsw Energy": "JSWENERGY.NS",
+    "NTPC": "NTPC.NS",
+    "Power Grid Corp": "POWERGRID.NS",
+    "NHPC": "NHPC.NS"
+}
 
-# Left graph
-col1, col2 = st.columns(2)
+# Streamlit UI
+st.title("Stock Market Dashboard")
+st.sidebar.header("Select Company")
 
-with col1:
-    st.markdown('<div class="left-box">', unsafe_allow_html=True)
-    # Placeholder data for the left graph
-    data_left = pd.Series([1, 3, 2, 4, 5])
-    fig_left, ax_left = plt.subplots()
-    ax_left.plot(data_left)
-    st.pyplot(fig_left)
-    st.markdown('</div>', unsafe_allow_html=True)
+# Dropdown for company selection
+company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
+ticker = companies[company]
 
-# Right graph
-with col2:
-    st.markdown('<div class="right-box">', unsafe_allow_html=True)
-    # Placeholder data for the right graph
-    data_right = pd.Series([5, 4, 3, 2, 1])
-    fig_right, ax_right = plt.subplots()
-    ax_right.plot(data_right)
-    st.pyplot(fig_right)
-    st.markdown('</div>', unsafe_allow_html=True)
+# Fetch and display stock data
+st.subheader(f"{company} Stock Data")
+df_stock = fetch_stock_data(ticker)
+st.dataframe(df_stock.tail(10))  # Show last 10 records
 
-st.markdown('</div>', unsafe_allow_html=True)
+# Fetch and display fundamental data
+st.subheader(f"{company} Financial Data")
+df_fundamental = fetch_fundamental_data(ticker)
+st.dataframe(df_fundamental)
+
+st.write("Data fetched successfully! Use this for further analysis and prediction.")

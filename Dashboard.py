@@ -9,6 +9,11 @@ import pandas as pd
 import yfinance as yf
 import requests
 
+import streamlit as st
+import pandas as pd
+import yfinance as yf
+import requests
+
 def load_css(file_name):
     with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -85,7 +90,7 @@ with col1:
     st.dataframe(df_stock.tail(10))
 
 # Second column: Live NEWS and EPS, PE, IPO KPI
-news_api_key = "YOUR_NEWS_API_KEY"
+news_api_key = "31739ed855eb4759908a898ab99a43e7"
 query = company
 
 with col2:

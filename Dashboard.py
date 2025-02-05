@@ -148,29 +148,37 @@ if page == "Home":
     st.sidebar.markdown("### Select Company")
     company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
     ticker = companies[company]
-    
+
+    st.markdown('<div style="border: 1px solid black; padding: 10px;">', unsafe_allow_html=True)
     st.markdown(f"### {company} Stock Data")
     df_stock = fetch_stock_data(ticker)
     st.dataframe(df_stock.tail(10))
+    st.markdown('</div>', unsafe_allow_html=True)
     
+    st.markdown('<div style="border: 1px solid black; padding: 10px;">', unsafe_allow_html=True)
     st.markdown(f"### {company} Financial Data")
     df_fundamental = fetch_fundamental_data(ticker)
     st.dataframe(df_fundamental)
+    st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown("Data fetched successfully! Use this for further analysis and prediction.")
     
 elif page == "Performance":
+    st.markdown('<div style="border: 1px solid black; padding: 10px;">', unsafe_allow_html=True)
     st.markdown("## Performance of Index")
     st.markdown("### Holding Analysis")
     st.markdown("### Equity Share Allocation")
     st.markdown("### Advanced Ratios")
+    st.markdown('</div>', unsafe_allow_html=True)
     # Add your charts and analysis here
 
 elif page == "Analysis":
+    st.markdown('<div style="border: 1px solid black; padding: 10px;">', unsafe_allow_html=True)
     st.markdown("## Index Graph")
     st.markdown("### Search Prediction")
     st.markdown("### Buy/Sell")
     st.markdown("### Live Stock")
     st.markdown("### Year-wise Filter")
     st.markdown("### ML Table")
+    st.markdown('</div>', unsafe_allow_html=True)
     # Add your analysis and tables here

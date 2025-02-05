@@ -16,32 +16,24 @@
 /* styles.css */
 
 /* Container to hold left and right boxes */
-.container {
+.horizontal-container {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    height: 100vh; /* Full viewport height */
     width: 100%;
 }
 
 /* Left and right box styling */
 .left-box, .right-box {
-    width: 48%;
-    border: 1px solid #000;
-    padding: 10px;
+    flex: 1; /* Each box takes up equal space */
+    border: 1px solid #0000FF; /* Blue border */
+    padding: 20px;
     border-radius: 5px;
-    background-color: #f9f9f9;
-}
-
-/* Styling for blue boxes */
-.blue-box {
-    border: 1px solid #0000FF;      /* Blue border */
-    padding: 20px;                  /* Padding inside the box */
-    margin-bottom: 20px;            /* Space between boxes */
-    border-radius: 5px;             /* Rounded corners */
-    background-color: #ADD8E6;      /* Light blue background */
-    text-align: center;             /* Centered text */
-    font-weight: bold;              /* Bold text */
-    font-size: 1.2em;               /* Larger font size */
+    background-color: #ADD8E6; /* Light blue background */
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-right: 10px; /* Space between boxes */
 }
 
 /* Placeholder styling */

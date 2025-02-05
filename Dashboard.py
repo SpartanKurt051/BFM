@@ -141,23 +141,13 @@ def predict_sales(data):
             best_mse = mse
             best_model = model
     
-    # Predict sales for 26th January 2025
-    next_day = pd.DataFrame({
-        'Year': [2025],
-        'Month': [1],
-        'Day': [26],
-        'Sales': [0]  # Placeholder value for Sales
-    })
-    next_day = clean_transform_data(next_day)
-    next_day_sales = best_model.predict(next_day)[0]
-    
-    return best_model, best_mse, next_day_sales
+    return best_model, best_mse
 
 # Plot sales predictions
 def plot_predictions(model, data, year):
     data_filtered = data[data['Year'] == year]
     fig = px.line(data_filtered, x='Date', y='Sales', title=f'Daily Sales Prediction for {year}')
-    fig.add_scatter(x=data_filtered['Date'], y=model.predict(data_filtered[data_filtered.columns.difference(['Date', 'Sales'])]), mode='lines', name='Predicted Sales')
+    fig.add_scatter(x=data_filtered['Date'], y=model.predict(data_filtered[['Year', 'Month', 'Day', 'Sales']]), mode='lines', name='Predicted Sales')
     fig.update_layout(hovermode='x unified')
     st.plotly_chart(fig)
 
@@ -183,7 +173,15 @@ col1, col2, col3 = st.columns([3, 1.5, 1.5])
 with col1:
     st.subheader("Sales Prediction")
     sales_data = load_sales_data(ticker)
-    model, mse, next_day_sales = predict_sales(sales_data)
+    model, mse = predict_sales(sales_data)
+    next_day = pd.DataFrame({
+        'Year': [2025],
+        'Month': [1],
+        'Day': [26],
+        'Sales': [0]  # Placeholder value for Sales
+    })
+    next_day = clean_transform_data(next_day)
+    next_day_sales = model.predict(next_day)[0]
     st.write(f"Predicted Sales for 26th Jan 2025: {next_day_sales}")
     
     st.subheader("Year-wise Filter")

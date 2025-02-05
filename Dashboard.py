@@ -96,10 +96,10 @@ query = company
 with col2:
     st.subheader("Live News")
     news_articles = fetch_live_news(news_api_key, query)
+    news_text = ""
     for article in news_articles:
-        st.write(f"**{article['title']}**")
-        st.write(article['description'])
-        st.write(f"[Read more]({article['url']})")
+        news_text += f"**{article['title']}**\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
+    st.text_area("Live News", news_text, height=300)
 
     st.subheader(f"{company} EPS, PE, IPO KPI")
     df_fundamental = fetch_fundamental_data(ticker)

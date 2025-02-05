@@ -1,14 +1,12 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import yfinance as yf
-import requests
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression, Ridge, Lasso
-from sklearn.metrics import mean_squared_error
-import plotly.express as px
-from sklearn.preprocessing import StandardScaler
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
+import plotly.graph_objects as go
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
 
 st.set_page_config(layout="wide") # Make the content fit the entire screen
 
@@ -90,127 +88,123 @@ def load_opening_price_data(ticker):
     hist['Opening Price'] = hist['Open']  # Assuming 'Open' prices as 'Opening Price'
     return hist
 
-# Data cleaning and transformation
-def clean_transform_data(data):
-    # Handle missing values
-    data = data.dropna()
+# Normalize Data
+def normalize_data(data):
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    data_scaled = scaler.fit_transform(data[['Opening Price']])
+    return data_scaled, scaler
 
-    # Remove duplicates
-    data = data.drop_duplicates()
+# Split Data
+def split_data(data_scaled):
+    train_size = int(len(data_scaled) * 0.8)
+    train_data, test_data = data_scaled[:train_size], data_scaled[train_size:]
+    return train_data, test_data
 
-    # Correct data types
-    data['Year'] = data['Year'].astype(int)
-    data['Month'] = data['Month'].astype(int)
-    data['Day'] = data['Day'].astype(int)
-    data['Opening Price'] = data['Opening Price'].astype(float)
+# Create Sequences for LSTM
+def create_sequences(data, seq_length=60):
+    X, y = [], []
+    for i in range(len(data) - seq_length):
+        X.append(data[i:i + seq_length])
+        y.append(data[i + seq_length])
+    return np.array(X), np.array(y)
 
-    # Normalize numerical features
-    numerical_features = ['Year', 'Month', 'Day', 'Opening Price']
-    numerical_transformer = StandardScaler()
+# Build LSTM Model
+def build_lstm_model(input_shape):
+    model = Sequential([
+        LSTM(50, return_sequences=True, input_shape=input_shape),
+        Dropout(0.2),
+        LSTM(50, return_sequences=False),
+        Dropout(0.2),
+        Dense(25),
+        Dense(1)
+    ])
+    model.compile(optimizer="adam", loss="mean_squared_error")
+    return model
 
-    # Combine transformations
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ('num', numerical_transformer, numerical_features)
-        ])
+# Train LSTM Model
+def train_lstm_model(model, X_train, y_train, X_test, y_test):
+    model.fit(X_train, y_train, epochs=20, batch_size=32, validation_data=(X_test, y_test))
+    return model
 
-    return preprocessor.fit_transform(data)
+# Make Predictions
+def make_predictions(model, X_test, scaler):
+    predictions = model.predict(X_test)
+    predictions = scaler.inverse_transform(predictions)
+    return predictions
 
-# Improved prediction model using ensemble methods
-def predict_opening_prices(data):
-    data = clean_transform_data(data)
-    X = data[:, :-1]  # All columns except the last one
-    y = data[:, -1]  # Last column is the target
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
-    # Trying different models
-    models = {
-        'Linear Regression': LinearRegression(),
-        'Ridge Regression': Ridge(alpha=1.0),
-        'Lasso Regression': Lasso(alpha=0.1)
-    }
-    
-    best_model = None
-    best_mse = float('inf')
-    
-    for name, model in models.items():
-        model.fit(X_train, y_train)
-        predictions = model.predict(X_test)
-        mse = mean_squared_error(y_test, predictions)
-        if mse < best_mse:
-            best_mse = mse
-            best_model = model
-    
-    return best_model, best_mse
-
-# Plot opening price predictions
-def plot_predictions(model, data, year):
-    data_filtered = data[data['Year'] == year]
-    fig = px.line(data_filtered, x='Date', y='Opening Price', title=f'Daily Opening Price Prediction for {year}')
-    fig.add_scatter(x=data_filtered['Date'], y=model.predict(data_filtered[['Year', 'Month', 'Day']]), mode='lines', name='Predicted Opening Price')
-    fig.add_scatter(x=data_filtered['Date'], y=data_filtered['Opening Price'], mode='lines', name='Actual Opening Price')
-    fig.update_layout(hovermode='x unified')
+# Plot predictions
+def plot_predictions(actual_prices, predictions, title):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(y=actual_prices.flatten(), mode="lines", name="Actual Price"))
+    fig.add_trace(go.Scatter(y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
+    fig.update_layout(title=title, xaxis_title="Days", yaxis_title="Price (₹)", template="plotly_dark")
     st.plotly_chart(fig)
 
-# Energy companies and their ticker symbols
-companies = {
-    "Adani Energy": "ADANIGREEN.NS",
-    "Tata Power": "TATAPOWER.NS",
-    "Jsw Energy": "JSWENERGY.NS",
-    "NTPC": "NTPC.NS",
-    "Power Grid Corp": "POWERGRID.NS",
-    "NHPC": "NHPC.NS"
-}
+# Main function
+def main():
+    st.title("📈 Stock Market Dashboard")
 
-st.title("Stock Market Dashboard")
-st.sidebar.header("Select Company")
+    # Sidebar
+    st.sidebar.header("Select Company")
+    companies = {
+        "Adani Energy": "ADANIGREEN.NS",
+        "Tata Power": "TATAPOWER.NS",
+        "Jsw Energy": "JSWENERGY.NS",
+        "NTPC": "NTPC.NS",
+        "Power Grid Corp": "POWERGRID.NS",
+        "NHPC": "NHPC.NS"
+    }
+    company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
+    ticker = companies[company]
 
-company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
-ticker = companies[company]
+    col1, col2, col3 = st.columns([3, 1.5, 1.5])
 
-col1, col2, col3 = st.columns([3, 1.5, 1.5])
+    with col1:
+        st.subheader("Opening Price Prediction")
 
-# First column: Opening Price Prediction, Year-wise Filter, and Data Display
-with col1:
-    st.subheader("Opening Price Prediction")
-    opening_price_data = load_opening_price_data(ticker)
-    model, mse = predict_opening_prices(opening_price_data)
-    
-    st.subheader("Year-wise Filter")
-    year_filter = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
-    plot_predictions(model, opening_price_data, year_filter)
-    
-    st.subheader("Opening Price Data")
-    filtered_data = opening_price_data[opening_price_data['Year'] == year_filter]
-    st.dataframe(filtered_data, height=200)
+        opening_price_data = load_opening_price_data(ticker)
+        data_scaled, scaler = normalize_data(opening_price_data)
+        train_data, test_data = split_data(data_scaled)
+        X_train, y_train = create_sequences(train_data)
+        X_test, y_test = create_sequences(test_data)
 
-# Second column: Selected Company's About and Performance
-with col2:
-    st.subheader(f"About {company}")
-    company_info = fetch_company_info(ticker)
-    st.write(company_info)
+        model = build_lstm_model((X_train.shape[1], 1))
+        model = train_lstm_model(model, X_train, y_train, X_test, y_test)
+        predictions = make_predictions(model, X_test, scaler)
+        actual_prices = scaler.inverse_transform(y_test.reshape(-1, 1))
 
-    st.subheader(f"{company} Performance")
-    df_stock = fetch_stock_data(ticker)
-    year_data = df_stock[df_stock.index.year == year_filter]
-    st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
+        plot_predictions(actual_prices, predictions, "Daily Opening Price Prediction")
+        
+        st.subheader("Opening Price Data")
+        filtered_data = opening_price_data[opening_price_data['Year'] == 2025]
+        st.dataframe(filtered_data, height=200)
 
-# Third column: Live NEWS and EPS, PE, IPO KPI
-news_api_key = "31739ed855eb4759908a898ab99a43e7"
-query = company
+    with col2:
+        st.subheader(f"About {company}")
+        company_info = fetch_company_info(ticker)
+        st.write(company_info)
 
-with col3:
-    st.subheader("Live News")
-    news_articles = fetch_live_news(news_api_key, query)
-    news_text = ""
-    for article in news_articles:
-        news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
-    st.text_area("Live News", news_text, height=150)
+        st.subheader(f"{company} Performance")
+        df_stock = fetch_stock_data(ticker)
+        year_data = df_stock[df_stock.index.year == 2025]
+        st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
 
-    st.subheader(f"{company} EPS, PE, IPO KPI")
-    eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-    kpi_info = f"*EPS: {eps_pe_ipo_kpi['EPS']}  |  **PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}  |  **IPO Date: {eps_pe_ipo_kpi['IPO Date']}  |  **KPI*: {eps_pe_ipo_kpi['KPI']}  |  **Current Price*: {eps_pe_ipo_kpi['Current Price']}"
-    st.write(kpi_info)
+    with col3:
+        st.subheader("Live News")
+        news_api_key = "31739ed855eb4759908a898ab99a43e7"
+        query = company
+        news_articles = fetch_live_news(news_api_key, query)
+        news_text = ""
+        for article in news_articles:
+            news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
+        st.text_area("Live News", news_text, height=150)
 
-st.write("Data fetched successfully! Use this for further analysis and prediction.")
+        st.subheader(f"{company} EPS, PE, IPO KPI")
+        eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
+        kpi_info = f"*EPS: {eps_pe_ipo_kpi['EPS']}  |  **PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}  |  **IPO Date: {eps_pe_ipo_kpi['IPO Date']}  |  **KPI*: {eps_pe_ipo_kpi['KPI']}  |  **Current Price*: {eps_pe_ipo_kpi['Current Price']}"
+        st.write(kpi_info)
+
+    st.write("Data fetched successfully! Use this for further analysis and prediction.")
+
+if __name__ == "__main__":
+    main()

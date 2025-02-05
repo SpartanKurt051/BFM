@@ -17,7 +17,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 
@@ -156,6 +156,9 @@ def plot_predictions(model, data, view):
     plt.ylabel('Sales')
     plt.title(f'{view}-wise Sales Prediction')
     plt.legend()
+    plt.grid(True)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
     st.pyplot(plt)
 
 # Energy companies and their ticker symbols
@@ -187,7 +190,7 @@ with col1:
     
     st.subheader("Year-wise Filter")
     year_filter = st.slider("Select Year", 2020, 2025, (2020, 2025))
-    filtered_data = sales_data[(sales_data['Year'] >= year_filter[0]) & (sales_data['Year'] <= year_filter[1])]
+    filtered_data = sales_data[sales_data['Year'].isin(range(year_filter[0], year_filter[1] + 1))]
     st.write(filtered_data)
     
     st.subheader("Sales Data")

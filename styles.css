@@ -1,5 +1,17 @@
 
+/* styles.css */
 
+/* Styling for blue boxes */
+.blue-box {
+    border: 1px solid #0000FF;      /* Blue border */
+    padding: 20px;                  /* Padding inside the box */
+    margin-bottom: 20px;            /* Space between boxes */
+    border-radius: 5px;             /* Rounded corners */
+    background-color: #ADD8E6;      /* Light blue background */
+    text-align: center;             /* Centered text */
+    font-weight: bold;              /* Bold text */
+    font-size: 1.2em;               /* Larger font size */
+}
 /* General styling for all div tags */
 div {
     border: 1px solid #000; /* Black border */

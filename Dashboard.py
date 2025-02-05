@@ -16,7 +16,6 @@ def load_css(file_name):
 load_css("styles.css")
 
 # Streamlit UI with two vertical parts
-st.markdown('<div class="container_primary">', unsafe_allow_html=True)
 
 # Left division
 st.markdown('<span class="left-box">Left Box Content</span>', unsafe_allow_html=True)
@@ -24,4 +23,4 @@ st.markdown('<span class="left-box">Left Box Content</span>', unsafe_allow_html=
 # Right division
 st.markdown('<span class="right-box">Right Box Content</span>', unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)
+

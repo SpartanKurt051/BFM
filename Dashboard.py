@@ -78,8 +78,8 @@ def fetch_company_info(ticker):
     summary = info.get("longBusinessSummary", "No information available.")
     return summary
 
-# Load closing price data for prediction
-def load_closing_price_data(ticker):
+# Load opening price data for prediction
+def load_opening_price_data(ticker):
     stock = yf.Ticker(ticker)
     hist = stock.history(period="max")
     hist = hist[hist.index <= '2025-01-25']  # Limit data till 25th January 2025
@@ -87,7 +87,7 @@ def load_closing_price_data(ticker):
     hist['Year'] = hist['Date'].dt.year
     hist['Month'] = hist['Date'].dt.month
     hist['Day'] = hist['Date'].dt.day
-    hist['Closing Price'] = hist['Close']  # Assuming 'Close' prices as 'Closing Price'
+    hist['Opening Price'] = hist['Open']  # Assuming 'Open' prices as 'Opening Price'
     return hist
 
 # Data cleaning and transformation
@@ -102,10 +102,10 @@ def clean_transform_data(data):
     data['Year'] = data['Year'].astype(int)
     data['Month'] = data['Month'].astype(int)
     data['Day'] = data['Day'].astype(int)
-    data['Closing Price'] = data['Closing Price'].astype(float)
+    data['Opening Price'] = data['Opening Price'].astype(float)
 
     # Normalize numerical features
-    numerical_features = ['Year', 'Month', 'Day', 'Closing Price']
+    numerical_features = ['Year', 'Month', 'Day', 'Opening Price']
     numerical_transformer = StandardScaler()
 
     # Combine transformations
@@ -117,7 +117,7 @@ def clean_transform_data(data):
     return preprocessor.fit_transform(data)
 
 # Improved prediction model using ensemble methods
-def predict_closing_prices(data):
+def predict_opening_prices(data):
     data = clean_transform_data(data)
     X = data[:, :-1]  # All columns except the last one
     y = data[:, -1]  # Last column is the target
@@ -144,11 +144,11 @@ def predict_closing_prices(data):
     
     return best_model, best_mse
 
-# Plot closing price predictions
+# Plot opening price predictions
 def plot_predictions(model, data, year):
     data_filtered = data[data['Year'] == year]
-    fig = px.line(data_filtered, x='Date', y='Closing Price', title=f'Daily Closing Price Prediction for {year}')
-    fig.add_scatter(x=data_filtered['Date'], y=model.predict(data_filtered[['Year', 'Month', 'Day']]), mode='lines', name='Predicted Closing Price')
+    fig = px.line(data_filtered, x='Date', y='Opening Price', title=f'Daily Opening Price Prediction for {year}')
+    fig.add_scatter(x=data_filtered['Date'], y=model.predict(data_filtered[['Year', 'Month', 'Day']]), mode='lines', name='Predicted Opening Price')
     fig.update_layout(hovermode='x unified')
     st.plotly_chart(fig)
 
@@ -170,18 +170,18 @@ ticker = companies[company]
 
 col1, col2, col3 = st.columns([3, 1.5, 1.5])
 
-# First column: Closing Price Prediction, Year-wise Filter, and Data Display
+# First column: Opening Price Prediction, Year-wise Filter, and Data Display
 with col1:
-    st.subheader("Closing Price Prediction")
-    closing_price_data = load_closing_price_data(ticker)
-    model, mse = predict_closing_prices(closing_price_data)
+    st.subheader("Opening Price Prediction")
+    opening_price_data = load_opening_price_data(ticker)
+    model, mse = predict_opening_prices(opening_price_data)
     
     st.subheader("Year-wise Filter")
     year_filter = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
-    plot_predictions(model, closing_price_data, year_filter)
+    plot_predictions(model, opening_price_data, year_filter)
     
-    st.subheader("Closing Price Data")
-    filtered_data = closing_price_data[closing_price_data['Year'] == year_filter]
+    st.subheader("Opening Price Data")
+    filtered_data = opening_price_data[opening_price_data['Year'] == year_filter]
     st.dataframe(filtered_data, height=200)
 
 # Second column: Selected Company's About and Performance

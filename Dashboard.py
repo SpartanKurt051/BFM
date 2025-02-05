@@ -141,16 +141,16 @@ def plot_predictions(model, data, view):
     plt.figure(figsize=(10, 5))
     if view == 'Yearly':
         data_grouped = data.groupby('Year').mean().reset_index()
-        plt.scatter(data_grouped['Year'], data_grouped['Sales'], color='blue', label='Actual Sales')
+        plt.plot(data_grouped['Year'], data_grouped['Sales'], color='blue', label='Actual Sales')
         plt.plot(data_grouped['Year'], model.predict(data_grouped[['Year', 'Year', 'Year']]), color='red', label='Predicted Sales')
         plt.xlabel('Year')
     elif view == 'Monthly':
         data_grouped = data.groupby(['Year', 'Month']).mean().reset_index()
-        plt.scatter(data_grouped.index, data_grouped['Sales'], color='blue', label='Actual Sales')
+        plt.plot(data_grouped.index, data_grouped['Sales'], color='blue', label='Actual Sales')
         plt.plot(data_grouped.index, model.predict(data_grouped[['Year', 'Month', 'Month']]), color='red', label='Predicted Sales')
         plt.xlabel('Month')
     else:  # Daily
-        plt.scatter(data['Date'], data['Sales'], color='blue', label='Actual Sales')
+        plt.plot(data['Date'], data['Sales'], color='blue', label='Actual Sales')
         plt.plot(data['Date'], model.predict(data[['Year', 'Month', 'Day']]), color='red', label='Predicted Sales')
         plt.xlabel('Date')
     plt.ylabel('Sales')

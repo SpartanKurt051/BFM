@@ -18,8 +18,6 @@
 /* Left and right box styling */
 .left-box, .right-box {
     flex: 1; /* Each box takes up equal space */
-    height: 100vh; /* Full viewport height */
-    width: 500px; /
     border: 1px solid #0000FF; /* Blue border */
     padding: 20px;
     border-radius: 5px;

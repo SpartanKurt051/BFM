@@ -7,6 +7,7 @@ from sklearn.metrics import mean_squared_error
 import streamlit as st
 import pandas as pd
 import yfinance as yf
+import requests
 
 def load_css(file_name):
     with open(file_name) as f:
@@ -16,19 +17,16 @@ def load_css(file_name):
 load_css("styles.css")
 
 def fetch_stock_data(ticker):
-    """Fetch historical stock data from 2020 to 2025-01-25 on a daily basis."""
     df = yf.download(ticker, start="2020-01-01", end="2025-01-25")
     return df
 
 def fetch_fundamental_data(ticker):
-    """Fetch fundamental company data for sales prediction on a daily basis."""
     stock = yf.Ticker(ticker)
     info = stock.info
     financials = stock.financials
     balance_sheet = stock.balance_sheet
     cashflow = stock.cashflow
     
-    # Extract relevant financial data on a daily basis
     dates = pd.date_range(start="2020-01-01", end="2025-01-25", freq='D')
     fundamental_data = []
     
@@ -53,6 +51,12 @@ def fetch_fundamental_data(ticker):
     
     return pd.DataFrame(fundamental_data)
 
+def fetch_live_news(api_key, query):
+    url = f'https://newsapi.org/v2/everything?q={query}&sortBy=publishedAt&apiKey={api_key}'
+    response = requests.get(url)
+    news_data = response.json()
+    return news_data['articles'] if 'articles' in news_data else []
+
 # Energy companies and their ticker symbols
 companies = {
     "Adani Energy": "ADANIGREEN.NS",
@@ -63,11 +67,9 @@ companies = {
     "NHPC": "NHPC.NS"
 }
 
-# Streamlit UI
 st.title("Stock Market Dashboard")
 st.sidebar.header("Select Company")
 
-# Dropdown for company selection
 company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
 ticker = companies[company]
 
@@ -76,18 +78,23 @@ col1, col2 = st.columns(2)
 # First column: Selected Company's About and Performance
 with col1:
     st.subheader(f"About {company}")
-    # Add company information here
     st.write("Company information goes here...")
 
     st.subheader(f"{company} Performance")
     df_stock = fetch_stock_data(ticker)
-    st.dataframe(df_stock.tail(10))  # Show last 10 records
+    st.dataframe(df_stock.tail(10))
 
 # Second column: Live NEWS and EPS, PE, IPO KPI
+news_api_key = "YOUR_NEWS_API_KEY"
+query = company
+
 with col2:
     st.subheader("Live News")
-    # Add live news fetching and display code here
-    st.write("Live news goes here...")
+    news_articles = fetch_live_news(news_api_key, query)
+    for article in news_articles:
+        st.write(f"**{article['title']}**")
+        st.write(article['description'])
+        st.write(f"[Read more]({article['url']})")
 
     st.subheader(f"{company} EPS, PE, IPO KPI")
     df_fundamental = fetch_fundamental_data(ticker)

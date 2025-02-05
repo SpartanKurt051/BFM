@@ -15,21 +15,26 @@ def fetch_stock_data(ticker):
     return df
 
 def fetch_fundamental_data(ticker):
-    """Fetch fundamental company data for sales prediction."""
+    """Fetch fundamental company data for sales prediction over the same time period."""
     stock = yf.Ticker(ticker)
     info = stock.info
     financials = stock.financials
     
-    # Extract relevant financial data
-    data = {
-        "Market Cap": info.get("marketCap"),
-        "Enterprise Value": info.get("enterpriseValue"),
-        "P/E Ratio": info.get("trailingPE"),
-        "Debt-to-Equity Ratio": info.get("debtToEquity"),
-        "Total Revenue (Latest)": financials.loc["Total Revenue"].iloc[0] if "Total Revenue" in financials.index else None
-    }
+    # Extract relevant financial data over time
+    fundamental_data = pd.DataFrame()
+    for year in range(2021, 2025):
+        data = {
+            "Year": year,
+            "Market Cap": info.get("marketCap"),
+            "Enterprise Value": info.get("enterpriseValue"),
+            "P/E Ratio": info.get("trailingPE"),
+            "Debt-to-Equity Ratio": info.get("debtToEquity"),
+            "Total Revenue": financials.loc["Total Revenue"].get(f"{year}-12-31", None) if "Total Revenue" in financials.index else None
+        }
+        fundamental_data = fundamental_data.append(data, ignore_index=True)
     
-    return pd.DataFrame([data])
+    return fundamental_data
+
 
 # Energy companies and their ticker symbols
 companies = {

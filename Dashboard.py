@@ -3,7 +3,7 @@ import pandas as pd
 import yfinance as yf
 import requests
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.metrics import mean_squared_error
 import plotly.express as px
 from sklearn.preprocessing import StandardScaler
@@ -112,18 +112,33 @@ def clean_transform_data(data):
 
     return preprocessor.fit_transform(data)
 
-# Improved prediction model using Ridge Regression
+# Improved prediction model using ensemble methods
 def predict_sales(data):
     data = clean_transform_data(data)
     X = data[:, :-1]  # All columns except the last one
     y = data[:, -1]  # Last column is the target
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    model = Ridge(alpha=1.0)
-    model.fit(X_train, y_train)
-    predictions = model.predict(X_test)
-    mse = mean_squared_error(y_test, predictions)
-    return model, predictions, mse, X_test, y_test
+    
+    # Trying different models
+    models = {
+        'Linear Regression': LinearRegression(),
+        'Ridge Regression': Ridge(alpha=1.0),
+        'Lasso Regression': Lasso(alpha=0.1)
+    }
+    
+    best_model = None
+    best_mse = float('inf')
+    
+    for name, model in models.items():
+        model.fit(X_train, y_train)
+        predictions = model.predict(X_test)
+        mse = mean_squared_error(y_test, predictions)
+        if mse < best_mse:
+            best_mse = mse
+            best_model = model
+    
+    return best_model, best_mse
 
 # Plot sales predictions
 def plot_predictions(model, data, year):
@@ -143,6 +158,8 @@ companies = {
     "NHPC": "NHPC.NS"
 }
 
+st.set_page_config(layout="wide") # Make the content fit the entire screen
+
 st.title("Stock Market Dashboard")
 st.sidebar.header("Select Company")
 
@@ -155,7 +172,7 @@ col1, col2, col3 = st.columns([3, 1.5, 1.5])
 with col1:
     st.subheader("Sales Prediction")
     sales_data = load_sales_data(ticker)
-    model, predictions, mse, X_test, y_test = predict_sales(sales_data)
+    model, mse = predict_sales(sales_data)
     
     st.subheader("Year-wise Filter")
     year_filter = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])

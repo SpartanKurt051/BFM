@@ -19,9 +19,9 @@ load_css("styles.css")
 st.markdown('<div class="container_primary">', unsafe_allow_html=True)
 
 # Left division
-st.markdown('<div class="left-box">Left Box Content</div>', unsafe_allow_html=True)
+st.markdown('<span class="left-box">Left Box Content</span>', unsafe_allow_html=True)
 
 # Right division
-st.markdown('<div class="right-box">Right Box Content</div>', unsafe_allow_html=True)
+st.markdown('<span class="right-box">Right Box Content</span>', unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)

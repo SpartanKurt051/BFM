@@ -193,7 +193,7 @@ with col2:
     st.subheader(f"{company} Performance")
     df_stock = fetch_stock_data(ticker)
     year_data = df_stock[df_stock.index.year == year_filter]
-    st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1, format="%d-%m-%Y")
+    st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
 # Third column: Live NEWS and EPS, PE, IPO KPI
 news_api_key = "31739ed855eb4759908a898ab99a43e7"
 query = company

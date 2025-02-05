@@ -10,6 +10,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 
+st.set_page_config(layout="wide") # Make the content fit the entire screen
+
 def load_css(file_name):
     with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -34,7 +36,7 @@ def fetch_fundamental_data(ticker):
     for date in dates:
         try:
             total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            debt_to_equity = balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None) if "Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index else None
+            debt_to_equity = balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None) if "Total Debt" in balance_sheet index and "Total Equity" in balance_sheet.index else None
             net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
         except Exception:
             total_revenue, debt_to_equity, net_cashflow = None, None, None
@@ -79,6 +81,7 @@ def fetch_company_info(ticker):
 def load_sales_data(ticker):
     stock = yf.Ticker(ticker)
     hist = stock.history(period="max")
+    hist = hist[hist.index <= '2025-01-25']  # Limit data till 25th January 2025
     hist.reset_index(inplace=True)
     hist['Year'] = hist['Date'].dt.year
     hist['Month'] = hist['Date'].dt.month
@@ -157,8 +160,6 @@ companies = {
     "Power Grid Corp": "POWERGRID.NS",
     "NHPC": "NHPC.NS"
 }
-
-st.set_page_config(layout="wide") # Make the content fit the entire screen
 
 st.title("Stock Market Dashboard")
 st.sidebar.header("Select Company")

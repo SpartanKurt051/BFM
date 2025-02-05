@@ -79,12 +79,13 @@ st.dataframe(df_fundamental)
 st.write("Data fetched successfully! Use this for further analysis and prediction.")
 
 '''
-import streamlit as st
-import pandas as pd
-import yfinance as yf
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
+# Load CSS file
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# Load CSS
+load_css("style.css")
 
 # Define functions to fetch data
 def fetch_stock_data(ticker):
@@ -102,7 +103,7 @@ def fetch_fundamental_data(ticker):
     for date in dates:
         try:
             total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            debt_to_equity = balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None) if "Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index else None
+            debt_to_equity = balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None) if "Total Debt" in balance sheet.index and "Total Equity" in balance sheet.index else None
             net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
         except Exception:
             total_revenue, debt_to_equity, net_cashflow = None, None, None
@@ -140,12 +141,15 @@ if page == "Home":
     st.sidebar.header("Select Company")
     company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
     ticker = companies[company]
+    
     st.subheader(f"{company} Stock Data")
     df_stock = fetch_stock_data(ticker)
     st.dataframe(df_stock.tail(10))
+    
     st.subheader(f"{company} Financial Data")
     df_fundamental = fetch_fundamental_data(ticker)
     st.dataframe(df_fundamental)
+    
     st.write("Data fetched successfully! Use this for further analysis and prediction.")
     
 elif page == "Performance":

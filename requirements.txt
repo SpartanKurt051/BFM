@@ -7,4 +7,3 @@ datetime
 numpy
 seaborn
 matplotlib
-sklearn

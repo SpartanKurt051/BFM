@@ -164,6 +164,8 @@ def main():
     with col1:
         st.subheader("Opening Price Prediction")
 
+        year = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
+        
         opening_price_data = load_opening_price_data(ticker)
         data_scaled, scaler = normalize_data(opening_price_data)
         train_data, test_data = split_data(data_scaled)
@@ -175,14 +177,14 @@ def main():
         predictions = make_predictions(model, X_test, scaler)
         actual_prices = scaler.inverse_transform(y_test.reshape(-1, 1))
 
-        # Generate dates for the entire period
-        dates = pd.date_range(start="2020-01-01", end="2025-01-26", freq='D')
+        # Generate dates for the selected year with 365 points
+        dates = pd.date_range(start=f"{year}-01-01", end=f"{year}-12-31", freq='D')
 
         # Plot the predictions
-        plot_predictions(dates[:len(predictions)], actual_prices, predictions, "Daily Opening Price Prediction")
+        plot_predictions(dates[:len(predictions)], actual_prices, predictions, f"Daily Opening Price Prediction for {year}")
 
         st.subheader("Opening Price Data")
-        filtered_data = opening_price_data[opening_price_data['Year'] == 2025]
+        filtered_data = opening_price_data[opening_price_data['Year'] == year]
         st.dataframe(filtered_data, height=200)
 
     with col2:
@@ -192,7 +194,7 @@ def main():
 
         st.subheader(f"{company} Performance")
         df_stock = fetch_stock_data(ticker)
-        year_data = df_stock[df_stock.index.year == 2025]
+        year_data = df_stock[df_stock.index.year == year]
         st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
 
     with col3:

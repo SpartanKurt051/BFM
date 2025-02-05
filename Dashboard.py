@@ -27,3 +27,4 @@ st.markdown('<div class="placeholder">ABOUT, PERFORMANCE OF INDEX ( HOLDING ANAL
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+st.write("Hello")

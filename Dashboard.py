@@ -79,6 +79,13 @@ st.dataframe(df_fundamental)
 st.write("Data fetched successfully! Use this for further analysis and prediction.")
 
 '''
+import streamlit as st
+import pandas as pd
+import yfinance as yf
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
 # Load CSS file
 def load_css(file_name):
     with open(file_name) as f:

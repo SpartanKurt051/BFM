@@ -5,9 +5,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 #Create a ticker-dropdown
+
 def fetch_stock_data(ticker):
-    """Fetch historical stock data."""
-    df = yf.download(ticker, start="2021-01-01", end="2025-01-25")
+    """Fetch historical stock data from 2020 to 2025-01-25 on a daily basis."""
+    df = yf.download(ticker, start="2020-01-01", end="2025-01-25")
     return df
 
 def fetch_fundamental_data(ticker):
@@ -18,7 +19,7 @@ def fetch_fundamental_data(ticker):
     
     # Extract relevant financial data over time
     fundamental_data = []
-    for year in range(2021, 2025):
+    for year in range(2020, 2025):
         try:
             total_revenue = financials.loc["Total Revenue"].get(f"{year}-12-31", None) if "Total Revenue" in financials.index else None
         except Exception:

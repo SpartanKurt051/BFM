@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import yfinance as yf
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
@@ -12,9 +13,6 @@ companies = {
     "Power Grid Corp": "POWERGRID.NS",
     "NHPC": "NHPC.NS"
 }
-
-# Streamlit app title
-st.title('Stock Data for Multiple Companies')
 
 # Dropdown menu for selecting company
 company = st.selectbox('Select a company', list(companies.keys()))

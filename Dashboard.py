@@ -1,22 +1,11 @@
 import streamlit as st
 import pandas as pd
 import yfinance as yf
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
-import streamlit as st
-import pandas as pd
-import yfinance as yf
-import requests
-
-import streamlit as st
-import pandas as pd
-import yfinance as yf
 import requests
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
-import matplotlib.pyplot as plt
+import plotly.express as px
 from sklearn.preprocessing import StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -138,28 +127,19 @@ def predict_sales(data):
 
 # Plot sales predictions
 def plot_predictions(model, data, view):
-    plt.figure(figsize=(10, 5))
     if view == 'Yearly':
         data_grouped = data.groupby('Year').mean().reset_index()
-        plt.plot(data_grouped['Year'], data_grouped['Sales'], color='blue', label='Actual Sales')
-        plt.plot(data_grouped['Year'], model.predict(data_grouped[['Year', 'Year', 'Year']]), color='red', label='Predicted Sales')
-        plt.xlabel('Year')
+        fig = px.line(data_grouped, x='Year', y='Sales', title='Yearly Sales Prediction')
+        fig.add_scatter(x=data_grouped['Year'], y=model.predict(data_grouped[['Year', 'Year', 'Year']]), mode='lines', name='Predicted Sales')
     elif view == 'Monthly':
         data_grouped = data.groupby(['Year', 'Month']).mean().reset_index()
-        plt.plot(data_grouped.index, data_grouped['Sales'], color='blue', label='Actual Sales')
-        plt.plot(data_grouped.index, model.predict(data_grouped[['Year', 'Month', 'Month']]), color='red', label='Predicted Sales')
-        plt.xlabel('Month')
+        fig = px.line(data_grouped, x=data_grouped.index, y='Sales', title='Monthly Sales Prediction')
+        fig.add_scatter(x=data_grouped.index, y=model.predict(data_grouped[['Year', 'Month', 'Month']]), mode='lines', name='Predicted Sales')
     else:  # Daily
-        plt.plot(data['Date'], data['Sales'], color='blue', label='Actual Sales')
-        plt.plot(data['Date'], model.predict(data[['Year', 'Month', 'Day']]), color='red', label='Predicted Sales')
-        plt.xlabel('Date')
-    plt.ylabel('Sales')
-    plt.title(f'{view}-wise Sales Prediction')
-    plt.legend()
-    plt.grid(True)
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    st.pyplot(plt)
+        fig = px.line(data, x='Date', y='Sales', title='Daily Sales Prediction')
+        fig.add_scatter(x=data['Date'], y=model.predict(data[['Year', 'Month', 'Day']]), mode='lines', name='Predicted Sales')
+    fig.update_layout(hovermode='x unified')
+    st.plotly_chart(fig)
 
 # Energy companies and their ticker symbols
 companies = {
@@ -189,8 +169,8 @@ with col1:
     plot_predictions(model, sales_data, view)
     
     st.subheader("Year-wise Filter")
-    year_filter = st.slider("Select Year", 2020, 2025, (2020, 2025))
-    filtered_data = sales_data[sales_data['Year'].isin(range(year_filter[0], year_filter[1] + 1))]
+    year_filter = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
+    filtered_data = sales_data[sales_data['Year'] == year_filter]
     st.write(filtered_data)
     
     st.subheader("Sales Data")

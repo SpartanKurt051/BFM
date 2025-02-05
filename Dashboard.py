@@ -187,7 +187,6 @@ def main():
         filtered_data = opening_price_data[opening_price_data['Year'] == year_filter]
         st.dataframe(filtered_data, height=200)
 
-    with col2:
         st.subheader(f"About {company}")
         company_info = fetch_company_info(ticker)
         st.write(company_info)
@@ -195,14 +194,14 @@ def main():
         st.subheader(f"{company} Performance")
         df_stock = fetch_stock_data(ticker)
         year_data = df_stock[df_stock.index.year == year_filter]
-        year_data['Volume'].fillna(0, inplace=True)  # Fill missing values with zero
-        year_data['Volume'] = year_data['Volume'].astype(int)  # Ensure the data type is integer
         st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
 
+# Third column: Live NEWS and EPS, PE, IPO KPI
+    news_api_key = "31739ed855eb4759908a898ab99a43e7"
+    query = company
+    
     with col3:
         st.subheader("Live News")
-        news_api_key = "31739ed855eb4759908a898ab99a43e7"
-        query = company
         news_articles = fetch_live_news(news_api_key, query)
         news_text = ""
         for article in news_articles:
@@ -213,8 +212,4 @@ def main():
         eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
         kpi_info = f"*EPS: {eps_pe_ipo_kpi['EPS']}  |  **PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}  |  **IPO Date: {eps_pe_ipo_kpi['IPO Date']}  |  **KPI*: {eps_pe_ipo_kpi['KPI']}  |  **Current Price*: {eps_pe_ipo_kpi['Current Price']}"
         st.write(kpi_info)
-
-    st.write("Data fetched successfully! Use this for further analysis and prediction.")
-
-if __name__ == "__main__":
-    main()
+    

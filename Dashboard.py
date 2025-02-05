@@ -87,8 +87,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
 # Load CSS file
-def load_css(styles.css):
-    with open(styles.css) as f:
+def load_css(styles):
+    with open(styles) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # Load CSS

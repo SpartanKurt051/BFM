@@ -73,6 +73,12 @@ def fetch_eps_pe_ipo_kpi(ticker):
     }
     return data
 
+def fetch_company_info(ticker):
+    stock = yf.Ticker(ticker)
+    info = stock.info
+    summary = info.get("longBusinessSummary", "No information available.")
+    return summary
+
 # Energy companies and their ticker symbols
 companies = {
     "Adani Energy": "ADANIGREEN.NS",
@@ -94,7 +100,8 @@ col1, col2 = st.columns(2)
 # First column: Selected Company's About and Performance
 with col1:
     st.subheader(f"About {company}")
-    st.write("Company information goes here...")
+    company_info = fetch_company_info(ticker)
+    st.write(company_info)
 
     st.subheader(f"{company} Performance")
     df_stock = fetch_stock_data(ticker)
@@ -110,13 +117,9 @@ with col2:
     news_text = ""
     for article in news_articles:
         news_text += f"**{article['title']}**\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
-    st.text_area("Live News", news_text, height=300)
+    st.text_area("Live News", news_text, height=150)
 
     st.subheader(f"{company} EPS, PE, IPO KPI")
     eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-    st.write(f"**EPS**: {eps_pe_ipo_kpi['EPS']}")
-    st.write(f"**PE Ratio**: {eps_pe_ipo_kpi['PE Ratio']}")
-    st.write(f"**IPO Date**: {eps_pe_ipo_kpi['IPO Date']}")
-    st.write(f"**KPI**: {eps_pe_ipo_kpi['KPI']}")
-
-st.write("Data fetched successfully! Use this for further analysis and prediction.")
+    kpi_info = f"**EPS**: {eps_pe_ipo_kpi['EPS']}  |  **PE Ratio**: {eps_pe_ipo_kpi['PE Ratio']}  |  **IPO Date**: {eps_pe_ipo_kpi['IPO Date']}  |  **KPI**: {eps_pe_ipo_kpi['KPI']}"
+    st.write(kpi_info)

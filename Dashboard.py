@@ -8,6 +8,7 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 import requests
+
 import streamlit as st
 import pandas as pd
 import yfinance as yf
@@ -88,12 +89,14 @@ def load_sales_data(ticker):
     hist = stock.history(period="max")
     hist.reset_index(inplace=True)
     hist['Year'] = hist['Date'].dt.year
+    hist['Month'] = hist['Date'].dt.month
+    hist['Day'] = hist['Date'].dt.day
     hist['Sales'] = hist['Close']  # Assuming 'Close' prices as 'Sales'
-    return hist[['Year', 'Sales']]
+    return hist
 
 # Predict sales using Linear Regression
 def predict_sales(data):
-    X = data[['Year']]
+    X = data[['Year', 'Month', 'Day']]
     y = data['Sales']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     model = LinearRegression()
@@ -103,13 +106,24 @@ def predict_sales(data):
     return model, predictions, mse, X_test, y_test
 
 # Plot sales predictions
-def plot_predictions(model, data):
+def plot_predictions(model, data, view):
     plt.figure(figsize=(10, 5))
-    plt.scatter(data['Year'], data['Sales'], color='blue', label='Actual Sales')
-    plt.plot(data['Year'], model.predict(data[['Year']]), color='red', label='Predicted Sales')
-    plt.xlabel('Year')
+    if view == 'Yearly':
+        data_grouped = data.groupby('Year').mean().reset_index()
+        plt.scatter(data_grouped['Year'], data_grouped['Sales'], color='blue', label='Actual Sales')
+        plt.plot(data_grouped['Year'], model.predict(data_grouped[['Year']]), color='red', label='Predicted Sales')
+        plt.xlabel('Year')
+    elif view == 'Monthly':
+        data_grouped = data.groupby(['Year', 'Month']).mean().reset_index()
+        plt.scatter(data_grouped.index, data_grouped['Sales'], color='blue', label='Actual Sales')
+        plt.plot(data_grouped.index, model.predict(data_grouped[['Year', 'Month']]), color='red', label='Predicted Sales')
+        plt.xlabel('Month')
+    else:  # Daily
+        plt.scatter(data['Date'], data['Sales'], color='blue', label='Actual Sales')
+        plt.plot(data['Date'], model.predict(data[['Year', 'Month', 'Day']]), color='red', label='Predicted Sales')
+        plt.xlabel('Date')
     plt.ylabel('Sales')
-    plt.title('Year-wise Sales Prediction')
+    plt.title(f'{view}-wise Sales Prediction')
     plt.legend()
     st.pyplot(plt)
 
@@ -131,12 +145,14 @@ ticker = companies[company]
 
 col1, col2, col3 = st.columns([2, 2, 2])
 
-# First column: Sales Prediction, Year-wise Filter, and Data Display
+# First column: Sales Prediction, View Filter, Year-wise Filter, and Data Display
 with col1:
     st.subheader("Sales Prediction")
     sales_data = load_sales_data(ticker)
     model, predictions, mse, X_test, y_test = predict_sales(sales_data)
-    plot_predictions(model, sales_data)
+    
+    view = st.selectbox("Select View", ["Yearly", "Monthly", "Daily"])
+    plot_predictions(model, sales_data, view)
     
     st.subheader("Year-wise Filter")
     year_filter = st.slider("Select Year", int(sales_data['Year'].min()), int(sales_data['Year'].max()), (int(sales_data['Year'].min()), int(sales_data['Year'].max())))

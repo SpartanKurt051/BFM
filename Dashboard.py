@@ -15,6 +15,6 @@ def load_css(file_name):
 load_css("styles.css")
 
 # Streamlit UI with a big box covering the entire page
-st.markdown('<div class="big-box">', unsafe_allow_html=True)
+st.markdown('<div class="container_primary">', unsafe_allow_html=True)
 st.markdown('Big Box Content', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)

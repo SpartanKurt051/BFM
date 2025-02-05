@@ -18,10 +18,11 @@ def load_css(file_name):
 # Load CSS
 load_css("styles.css")
 
+@st.cache_data
 def fetch_stock_data(ticker):
-    df = yf.download(ticker, start="2020-01-01", end="2025-01-25")
-    return df
+    return yf.download(ticker, start="2020-01-01", end="2025-01-25")
 
+@st.cache_data
 def fetch_fundamental_data(ticker):
     stock = yf.Ticker(ticker)
     info = stock.info
@@ -53,6 +54,7 @@ def fetch_fundamental_data(ticker):
     
     return pd.DataFrame(fundamental_data)
 
+@st.cache_data
 def fetch_live_news(api_key, query):
     url = f'https://newsapi.org/v2/everything?q={query}&sortBy=publishedAt&apiKey={api_key}'
     response = requests.get(url)
@@ -60,6 +62,7 @@ def fetch_live_news(api_key, query):
     news_data = response.json()
     return news_data['articles'] if 'articles' in news_data else []
 
+@st.cache_data
 def fetch_eps_pe_ipo_kpi(ticker):
     stock = yf.Ticker(ticker)
     info = stock.info
@@ -72,13 +75,14 @@ def fetch_eps_pe_ipo_kpi(ticker):
     }
     return data
 
+@st.cache_data
 def fetch_company_info(ticker):
     stock = yf.Ticker(ticker)
     info = stock.info
-    summary = info.get("longBusinessSummary", "No information available.")
-    return summary
+    return info.get("longBusinessSummary", "No information available.")
 
 # Load opening price data for prediction
+@st.cache_data
 def load_opening_price_data(ticker):
     stock = yf.Ticker(ticker)
     hist = stock.history(period="max")
@@ -89,6 +93,11 @@ def load_opening_price_data(ticker):
     hist['Day'] = hist['Date'].dt.day
     hist['Opening Price'] = hist['Open']  # Assuming 'Open' prices as 'Opening Price'
     return hist
+
+@st.cache_data
+def fetch_current_stock_price(ticker):
+    stock = yf.Ticker(ticker)
+    return stock.history(period="1d")["Close"].iloc[-1]
 
 # Normalize Data
 def normalize_data(data):
@@ -124,6 +133,7 @@ def build_lstm_model(input_shape):
     return model
 
 # Train LSTM Model
+@st.cache_data
 def train_lstm_model(model, X_train, y_train, X_test, y_test):
     model.fit(X_train, y_train, epochs=20, batch_size=32, validation_data=(X_test, y_test))
     return model
@@ -135,10 +145,11 @@ def make_predictions(model, X_test, scaler):
     return predictions
 
 # Plot predictions
-def plot_predictions(dates, actual_prices, predictions, title):
+def plot_predictions(dates, actual_prices, predictions, current_price, title):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=dates, y=actual_prices.flatten(), mode="lines", name="Actual Price"))
     fig.add_trace(go.Scatter(x=dates, y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
+    fig.add_trace(go.Scatter(x=[dates[-1]], y=[current_price], mode="markers", name="Current Price", marker=dict(color="green", size=10)))
     fig.update_layout(title=title, xaxis_title="Date", yaxis_title="Price (₹)", template="plotly_dark")
     st.plotly_chart(fig)
 
@@ -180,8 +191,11 @@ def main():
         # Generate dates for the selected year with 365 points
         dates = pd.date_range(start=f"{year}-01-01", end=f"{year}-12-31", freq='D')
 
+        # Fetch current stock price
+        current_price = fetch_current_stock_price(ticker)
+
         # Plot the predictions
-        plot_predictions(dates[:len(predictions)], actual_prices, predictions, f"Daily Opening Price Prediction for {year}")
+        plot_predictions(dates[:len(predictions)], actual_prices, predictions, current_price, f"Daily Opening Price Prediction for {year}")
 
         st.subheader("Opening Price Data")
         filtered_data = opening_price_data[opening_price_data['Year'] == year]

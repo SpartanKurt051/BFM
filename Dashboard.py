@@ -5,10 +5,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 #Create a ticker-dropdown
-import streamlit as st
-
-# Load CSS file
-import streamlit as st
 
 # Load CSS file
 def load_css(file_name):
@@ -22,8 +18,7 @@ load_css("styles.css")
 st.markdown('<div class="horizontal-container">', unsafe_allow_html=True)
 
 # Left division (Blank Container)
-st.markdown('<div class="left-box blue-box">', unsafe_allow_html=True)
-st.markdown('Left Box Content', unsafe_allow_html=True)
+st.markdown('<div class="left-box">', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Right division (Placeholder)

@@ -92,7 +92,7 @@ def load_css(file_name):
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # Load CSS
-load_css("style.css")
+load_css("styles.css")
 
 # Define functions to fetch data
 def fetch_stock_data(ticker):

@@ -7,24 +7,7 @@ from sklearn.metrics import mean_squared_error
 import streamlit as st
 import pandas as pd
 
-st.title('Reliance Industries Stock Data')
-df = pd.read_csv('reliance_stock_data.csv')
-st.dataframe(df)
-
-
-
-
-import streamlit as st
-import pandas as pd
-
 st.title('AdaniGreen Stock Data')
 df = pd.read_csv('AdaniGreen_data.csv')
 st.dataframe(df)
 
-
-import streamlit as st
-import pandas as pd
-
-st.title('AdaniGreen Stock Data')
-df = pd.read_csv('AdaniGreen_data.csv')
-st.dataframe(df)

@@ -8,7 +8,6 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 import requests
-
 import streamlit as st
 import pandas as pd
 import yfinance as yf
@@ -84,9 +83,13 @@ def fetch_company_info(ticker):
     return summary
 
 # Load sales data for prediction
-def load_sales_data(file_path):
-    sales_data = pd.read_csv(file_path)
-    return sales_data
+def load_sales_data(ticker):
+    stock = yf.Ticker(ticker)
+    hist = stock.history(period="max")
+    hist.reset_index(inplace=True)
+    hist['Year'] = hist['Date'].dt.year
+    hist['Sales'] = hist['Close']  # Assuming 'Close' prices as 'Sales'
+    return hist[['Year', 'Sales']]
 
 # Predict sales using Linear Regression
 def predict_sales(data):
@@ -128,10 +131,10 @@ ticker = companies[company]
 
 col1, col2, col3 = st.columns([2, 2, 2])
 
-# First column: Sales Prediction, Year-wise Filter, and CSV Display
+# First column: Sales Prediction, Year-wise Filter, and Data Display
 with col1:
     st.subheader("Sales Prediction")
-    sales_data = load_sales_data('sales_data.csv')
+    sales_data = load_sales_data(ticker)
     model, predictions, mse, X_test, y_test = predict_sales(sales_data)
     plot_predictions(model, sales_data)
     
@@ -140,7 +143,7 @@ with col1:
     filtered_data = sales_data[(sales_data['Year'] >= year_filter[0]) & (sales_data['Year'] <= year_filter[1])]
     st.write(filtered_data)
     
-    st.subheader("Sales Data CSV")
+    st.subheader("Sales Data")
     st.dataframe(sales_data, height=200)
 
 # Second column: Selected Company's About and Performance

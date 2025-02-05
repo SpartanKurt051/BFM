@@ -197,8 +197,8 @@ def main():
         year_data = df_stock[df_stock.index.year == year_filter]
         year_data['Volume'].fillna(0, inplace=True)  # Fill missing values with zero
         year_data['Volume'] = year_data['Volume'].astype(int)  # Ensure the data type is integer
-        if not year_data.empty:  # Check if year_data is not empty
-            st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
+        #if not year_data.empty:  # Check if year_data is not empty
+            #st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
 
     with col3:
         st.subheader("Live News")

@@ -9,6 +9,7 @@ import pandas as pd
 import yfinance as yf
 import requests
 
+
 import streamlit as st
 import pandas as pd
 import yfinance as yf
@@ -17,6 +18,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
 
 def load_css(file_name):
     with open(file_name) as f:
@@ -94,10 +98,38 @@ def load_sales_data(ticker):
     hist['Sales'] = hist['Close']  # Assuming 'Close' prices as 'Sales'
     return hist
 
+# Data cleaning and transformation
+def clean_transform_data(data):
+    # Handle missing values
+    data = data.dropna()
+
+    # Remove duplicates
+    data = data.drop_duplicates()
+
+    # Correct data types
+    data['Year'] = data['Year'].astype(int)
+    data['Month'] = data['Month'].astype(int)
+    data['Day'] = data['Day'].astype(int)
+    data['Sales'] = data['Sales'].astype(float)
+
+    # Normalize numerical features
+    numerical_features = ['Year', 'Month', 'Day', 'Sales']
+    numerical_transformer = StandardScaler()
+
+    # Combine transformations
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('num', numerical_transformer, numerical_features)
+        ])
+
+    return preprocessor.fit_transform(data)
+
 # Predict sales using Linear Regression
 def predict_sales(data):
-    X = data[['Year', 'Month', 'Day']]
-    y = data['Sales']
+    data = clean_transform_data(data)
+    X = data[:, :-1]  # All columns except the last one
+    y = data[:, -1]  # Last column is the target
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     model = LinearRegression()
     model.fit(X_train, y_train)

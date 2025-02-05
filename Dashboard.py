@@ -5,6 +5,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 #Create a ticker-dropdown
+import streamlit as st
+import yfinance as yf
+import pandas as pd
 
 def fetch_stock_data(ticker):
     """Fetch historical stock data from 2020 to 2025-01-25 on a daily basis."""
@@ -12,26 +15,33 @@ def fetch_stock_data(ticker):
     return df
 
 def fetch_fundamental_data(ticker):
-    """Fetch fundamental company data for sales prediction over the same time period."""
+    """Fetch fundamental company data for sales prediction on a daily basis."""
     stock = yf.Ticker(ticker)
     info = stock.info
     financials = stock.financials
+    balance_sheet = stock.balance_sheet
+    cashflow = stock.cashflow
     
-    # Extract relevant financial data over time
+    # Extract relevant financial data on a daily basis
+    dates = pd.date_range(start="2020-01-01", end="2025-01-25", freq='D')
     fundamental_data = []
-    for year in range(2020, 2025):
+    
+    for date in dates:
         try:
-            total_revenue = financials.loc["Total Revenue"].get(f"{year}-12-31", None) if "Total Revenue" in financials.index else None
+            total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
+            debt_to_equity = balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None) if "Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index else None
+            net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
         except Exception:
-            total_revenue = None
+            total_revenue, debt_to_equity, net_cashflow = None, None, None
         
         data = {
-            "Year": year,
+            "Date": date,
             "Market Cap": info.get("marketCap"),
             "Enterprise Value": info.get("enterpriseValue"),
             "P/E Ratio": info.get("trailingPE"),
-            "Debt-to-Equity Ratio": info.get("debtToEquity"),
-            "Total Revenue": total_revenue
+            "Debt-to-Equity Ratio": debt_to_equity,
+            "Total Revenue": total_revenue,
+            "Net Cash Flow": net_cashflow
         }
         fundamental_data.append(data)
     
@@ -66,3 +76,4 @@ df_fundamental = fetch_fundamental_data(ticker)
 st.dataframe(df_fundamental)
 
 st.write("Data fetched successfully! Use this for further analysis and prediction.")
+

@@ -5,14 +5,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 #Create a ticker-dropdown
-import streamlit as st
-import yfinance as yf
-import pandas as pd
-
-import streamlit as st
-import yfinance as yf
-import pandas as pd
-
 def fetch_stock_data(ticker):
     """Fetch historical stock data."""
     df = yf.download(ticker, start="2021-01-01", end="2025-01-25")
@@ -25,19 +17,24 @@ def fetch_fundamental_data(ticker):
     financials = stock.financials
     
     # Extract relevant financial data over time
-    fundamental_data = pd.DataFrame()
+    fundamental_data = []
     for year in range(2021, 2025):
+        try:
+            total_revenue = financials.loc["Total Revenue"].get(f"{year}-12-31", None) if "Total Revenue" in financials.index else None
+        except Exception:
+            total_revenue = None
+        
         data = {
             "Year": year,
             "Market Cap": info.get("marketCap"),
             "Enterprise Value": info.get("enterpriseValue"),
             "P/E Ratio": info.get("trailingPE"),
             "Debt-to-Equity Ratio": info.get("debtToEquity"),
-            "Total Revenue": financials.loc["Total Revenue"].get(f"{year}-12-31", None) if "Total Revenue" in financials.index else None
+            "Total Revenue": total_revenue
         }
-        fundamental_data = fundamental_data.append(data, ignore_index=True)
+        fundamental_data.append(data)
     
-    return fundamental_data
+    return pd.DataFrame(fundamental_data)
 
 # Energy companies and their ticker symbols
 companies = {
@@ -68,4 +65,3 @@ df_fundamental = fetch_fundamental_data(ticker)
 st.dataframe(df_fundamental)
 
 st.write("Data fetched successfully! Use this for further analysis and prediction.")
-

@@ -7,8 +7,9 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
+import requests
 
-st.set_page_config(layout="wide") # Make the content fit the entire screen
+st.set_page_config(layout="wide")
 
 def load_css(file_name):
     with open(file_name) as f:
@@ -55,6 +56,7 @@ def fetch_fundamental_data(ticker):
 def fetch_live_news(api_key, query):
     url = f'https://newsapi.org/v2/everything?q={query}&sortBy=publishedAt&apiKey={api_key}'
     response = requests.get(url)
+    response.raise_for_status()  # Raise an exception for HTTP errors
     news_data = response.json()
     return news_data['articles'] if 'articles' in news_data else []
 
@@ -173,10 +175,16 @@ def main():
         predictions = make_predictions(model, X_test, scaler)
         actual_prices = scaler.inverse_transform(y_test.reshape(-1, 1))
 
-        plot_predictions(actual_prices, predictions, "Daily Opening Price Prediction")
+        st.subheader("Year-wise Filter")
+        year_filter = st.selectbox("Select Year", sorted(opening_price_data['Year'].unique()))
+        yearly_data = opening_price_data[opening_price_data['Year'] == year_filter]
+        yearly_actual_prices = actual_prices[yearly_data.index[:len(actual_prices)]]
+        yearly_predictions = predictions[yearly_data.index[:len(predictions)]]
+
+        plot_predictions(yearly_actual_prices, yearly_predictions, f"Daily Opening Price Prediction for {year_filter}")
         
         st.subheader("Opening Price Data")
-        filtered_data = opening_price_data[opening_price_data['Year'] == 2025]
+        filtered_data = opening_price_data[opening_price_data['Year'] == year_filter]
         st.dataframe(filtered_data, height=200)
 
     with col2:
@@ -186,7 +194,7 @@ def main():
 
         st.subheader(f"{company} Performance")
         df_stock = fetch_stock_data(ticker)
-        year_data = df_stock[df_stock.index.year == 2025]
+        year_data = df_stock[df_stock.index.year == year_filter]
         st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
 
     with col3:

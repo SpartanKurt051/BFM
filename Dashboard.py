@@ -79,116 +79,134 @@ st.dataframe(df_fundamental)
 st.write("Data fetched successfully! Use this for further analysis and prediction.")
 
 '''
+
 import streamlit as st
+import yfinance as yf
 import pandas as pd
+import numpy as np
 import plotly.express as px
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+import datetime
 
-# Set page configuration (optional)
-st.set_page_config(
-    page_title="Multi-Page Dashboard",
-    page_icon=":bar_chart:",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+# Set Streamlit Page Configuration
+st.set_page_config(page_title="Stock Dashboard", layout="wide")
 
-# Multi-page navigation using a sidebar selectbox
-page = st.sidebar.selectbox("Select Page", ["Dashboard", "Page 2", "Page 3"])
+# Define the available companies
+companies = {
+    "Nifty Energy": "^CNXENERGY",
+    "Adani Green": "ADANIGREEN.NS",
+    "Tata Power": "TATAPOWER.NS",
+    "JSW Energy": "JSWENERGY.NS",
+    "NTPC": "NTPC.NS",
+    "Power Grid Corp": "POWERGRID.NS",
+    "NHPC": "NHPC.NS",
+}
 
-if page == "Dashboard":
-    st.title("Dashboard - Page 1")
-    
-    # Divide the page vertically into two columns (left and right)
-    left_col, right_col = st.columns(2)
-    
-    # LEFT HALF: Four horizontal sections
-    with left_col:
-        # Section 1: Index Graph with search prediction, buy/sell, live stock
-        with st.container():
-            st.subheader("Index Graph & Live Data")
-            # Placeholder for the index graph (replace with your chart code)
-            dummy_graph = px.line(x=[1, 2, 3, 4], y=[10, 15, 13, 17], title="Index Graph")
-            st.plotly_chart(dummy_graph, use_container_width=True)
-            st.write("Search Prediction, Buy/Sell Signals, Live Stock Data go here.")
-        
-        st.markdown("---")  # Horizontal separator
-        
-        # Section 2: Year-wise filter
-        with st.container():
-            st.subheader("Year-wise Filter")
-            # A selectbox to choose a year (you can expand this to a range or slider as needed)
-            year = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
-            st.write(f"Data filtered for the year: {year}")
-        
-        st.markdown("---")  # Horizontal separator
-        
-        # Section 3: ML Table
-        with st.container():
-            st.subheader("ML Table")
-            # Dummy table data; replace with your ML model output table
-            ml_data = pd.DataFrame({
-                "Metric": ["Accuracy", "Precision", "Recall"],
-                "Value": [0.85, 0.80, 0.78]
-            })
-            st.dataframe(ml_data)
-        
-        st.markdown("---")  # Horizontal separator
-        
-        # Section 4: Additional Dropdown
-        with st.container():
-            st.subheader("Additional Options")
-            option = st.selectbox("Select an Option", ["Option 1", "Option 2", "Option 3"])
-            st.write(f"You selected: {option}")
-    
-    # RIGHT HALF: About & Performance Charts
-    with right_col:
-        st.header("About & Performance")
-        
-        # About section
-        with st.container():
-            st.subheader("About")
-            st.write("This dashboard provides an analysis of the index performance along with detailed metrics such as Holding Analysis, Equity Share Allocation, and Advanced Ratios.")
-        
-        st.markdown("---")
-        
-        # Performance charts section
-        with st.container():
-            st.subheader("Performance of Index")
-            
-            # Holding Analysis Pie Chart
-            st.write("**Holding Analysis**")
-            holding_data = pd.DataFrame({
-                "Holding": ["Institutional", "Retail", "Foreign"],
-                "Value": [40, 35, 25]
-            })
-            holding_chart = px.pie(holding_data, values="Value", names="Holding", title="Holding Analysis")
-            st.plotly_chart(holding_chart, use_container_width=True)
-            
-            st.markdown("---")
-            
-            # Equity Share Allocation Pie Chart
-            st.write("**Equity Share Allocation**")
-            equity_data = pd.DataFrame({
-                "Category": ["Large Cap", "Mid Cap", "Small Cap"],
-                "Value": [50, 30, 20]
-            })
-            equity_chart = px.pie(equity_data, values="Value", names="Category", title="Equity Share Allocation")
-            st.plotly_chart(equity_chart, use_container_width=True)
-            
-            st.markdown("---")
-            
-            # Advanced Ratios Pie Chart
-            st.write("**Advanced Ratios**")
-            ratio_data = pd.DataFrame({
-                "Ratio": ["P/E", "P/B", "PEG"],
-                "Value": [15, 2, 1.2]
-            })
-            ratio_chart = px.pie(ratio_data, values="Value", names="Ratio", title="Advanced Ratios")
-            st.plotly_chart(ratio_chart, use_container_width=True)
-    
-elif page == "Page 2":
-    st.title("Dashboard - Page 2")
-    st.write("Content for Page 2 goes here.")
-    
-elif page == "Page 3":
-    st.title("Dashboard - Page 3")
-    st.write("Content for Page 3 goes here.")
+# Store Prediction Data
+@st.cache_data
+def get_historical_data(ticker):
+    stock = yf.Ticker(ticker)
+    data = stock.history(period="5y")  # Fetching last 5 years data
+    data = data.loc[data.index <= "2025-01-25"]  # Use data only until Jan 25, 2025
+    return data
+
+# Function to predict stock price using linear regression
+@st.cache_data
+def predict_stock_price(data):
+    data["Days"] = (data.index - data.index[0]).days
+    X = np.array(data["Days"]).reshape(-1, 1)
+    y = np.array(data["Close"]).reshape(-1, 1)
+
+    model = LinearRegression()
+    model.fit(X, y)
+    future_days = np.array([X[-1][0] + i for i in range(1, 31)]).reshape(-1, 1)  # Predict next 30 days
+    future_predictions = model.predict(future_days)
+
+    return future_days.flatten(), future_predictions.flatten()
+
+# Function to get real-time stock data
+def get_live_stock_price(ticker):
+    stock = yf.Ticker(ticker)
+    return stock.history(period="1d")["Close"].iloc[-1]
+
+# Layout using Streamlit Columns
+st.title("📈 Green Energy Stock Dashboard")
+
+# Dropdown for selecting company
+selected_company = st.selectbox("Select a company:", list(companies.keys()), index=0)
+
+# Fetch stock data
+ticker = companies[selected_company]
+data = get_historical_data(ticker)
+
+# Fetch real-time price
+real_time_price = get_live_stock_price(ticker)
+
+# Predict stock prices
+future_days, future_predictions = predict_stock_price(data)
+
+# Layout Grid
+col1, col2 = st.columns([1, 3])  # Sidebar section for Name & Price | Graph Section
+col3, col4, col5 = st.columns([1, 2, 1])  # BUY/SELL, Description, Heatmap
+
+# BLUE SECTION - Company Name & Price
+with col1:
+    st.markdown(
+        f"""
+        <div style="background-color:#5DADE2; padding:20px; text-align:center; border-radius:10px;">
+            <h2 style="color:white;">{selected_company}</h2>
+            <h3 style="color:white;">Rs. {real_time_price:.2f}</h3>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# RED SECTION - Stock Price Graph
+with col2:
+    fig = px.line(data, x=data.index, y="Close", title=f"{selected_company} Stock Price", template="plotly_dark")
+    st.plotly_chart(fig, use_container_width=True)
+
+# PINK SECTION - BUY/SELL Indicator
+with col3:
+    buy_sell_signal = "BUY" if future_predictions[-1] > data["Close"].iloc[-1] else "SELL"
+    st.markdown(
+        f"""
+        <div style="background-color:#EC407A; padding:20px; text-align:center; border-radius:10px;">
+            <h2 style="color:white;">{buy_sell_signal}</h2>
+            <h4 style="color:white;">Open: {data['Open'].iloc[-1]:.2f} | Close: {data['Close'].iloc[-1]:.2f}</h4>
+            <h3 style="color:white;">Error: ±2%</h3>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# YELLOW SECTION - Company Description
+with col4:
+    st.markdown(
+        """
+        <div style="background-color:#FBC02D; padding:20px; border-radius:10px;">
+            <p style="color:black; font-size:16px;">Lorem ipsum is simply dummy text of the printing and typesetting industry.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# BLUE SECTION - Market Cap Heatmap (Treemap)
+with col5:
+    market_caps = {
+        "Adani Green": 150000,
+        "Tata Power": 120000,
+        "JSW Energy": 100000,
+        "NTPC": 90000,
+        "Power Grid": 85000,
+        "NHPC": 70000,
+        "Company 7": 65000,
+        "Company 8": 60000,
+        "Company 9": 50000,
+        "Company 10": 40000,
+    }
+    df_market_caps = pd.DataFrame(list(market_caps.items()), columns=["Company", "Market Cap"])
+    fig_heatmap = px.treemap(df_market_caps, path=["Company"], values="Market Cap", title="Top 10 Market Cap Distribution")
+    st.plotly_chart(fig_heatmap, use_container_width=True)

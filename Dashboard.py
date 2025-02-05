@@ -4,11 +4,16 @@ import yfinance as yf
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
-#Create a ticker-dropdown
-
 import streamlit as st
-import yfinance as yf
 import pandas as pd
+import yfinance as yf
+
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# Load CSS
+load_css("styles.css")
 
 def fetch_stock_data(ticker):
     """Fetch historical stock data from 2020 to 2025-01-25 on a daily basis."""
@@ -66,14 +71,26 @@ st.sidebar.header("Select Company")
 company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
 ticker = companies[company]
 
-# Fetch and display stock data
-st.subheader(f"{company} Stock Data")
-df_stock = fetch_stock_data(ticker)
-st.dataframe(df_stock.tail(10))  # Show last 10 records
+col1, col2 = st.columns(2)
 
-# Fetch and display fundamental data
-st.subheader(f"{company} Financial Data")
-df_fundamental = fetch_fundamental_data(ticker)
-st.dataframe(df_fundamental)
+# First column: Selected Company's About and Performance
+with col1:
+    st.subheader(f"About {company}")
+    # Add company information here
+    st.write("Company information goes here...")
+
+    st.subheader(f"{company} Performance")
+    df_stock = fetch_stock_data(ticker)
+    st.dataframe(df_stock.tail(10))  # Show last 10 records
+
+# Second column: Live NEWS and EPS, PE, IPO KPI
+with col2:
+    st.subheader("Live News")
+    # Add live news fetching and display code here
+    st.write("Live news goes here...")
+
+    st.subheader(f"{company} EPS, PE, IPO KPI")
+    df_fundamental = fetch_fundamental_data(ticker)
+    st.dataframe(df_fundamental)
 
 st.write("Data fetched successfully! Use this for further analysis and prediction.")

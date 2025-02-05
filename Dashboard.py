@@ -149,6 +149,7 @@ def plot_predictions(model, data, year):
     data_filtered = data[data['Year'] == year]
     fig = px.line(data_filtered, x='Date', y='Opening Price', title=f'Daily Opening Price Prediction for {year}')
     fig.add_scatter(x=data_filtered['Date'], y=model.predict(data_filtered[['Year', 'Month', 'Day']]), mode='lines', name='Predicted Opening Price')
+    fig.add_scatter(x=data_filtered['Date'], y=data_filtered['Opening Price'], mode='lines', name='Actual Opening Price')
     fig.update_layout(hovermode='x unified')
     st.plotly_chart(fig)
 

@@ -9,7 +9,6 @@ import pandas as pd
 import yfinance as yf
 import requests
 
-
 import streamlit as st
 import pandas as pd
 import yfinance as yf
@@ -175,7 +174,7 @@ st.sidebar.header("Select Company")
 company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
 ticker = companies[company]
 
-col1, col2, col3 = st.columns([2, 2, 2])
+col1, col2, col3 = st.columns([3, 1.5, 1.5])
 
 # First column: Sales Prediction, View Filter, Year-wise Filter, and Data Display
 with col1:
@@ -187,7 +186,7 @@ with col1:
     plot_predictions(model, sales_data, view)
     
     st.subheader("Year-wise Filter")
-    year_filter = st.slider("Select Year", int(sales_data['Year'].min()), int(sales_data['Year'].max()), (int(sales_data['Year'].min()), int(sales_data['Year'].max())))
+    year_filter = st.slider("Select Year", 2020, 2025, (2020, 2025))
     filtered_data = sales_data[(sales_data['Year'] >= year_filter[0]) & (sales_data['Year'] <= year_filter[1])]
     st.write(filtered_data)
     

@@ -90,7 +90,7 @@ def load_sales_data(ticker):
     return hist
 
 # Data cleaning and transformation
-def clean_transform_data(data):
+def clean_transform_data(data, include_sales=True):
     # Handle missing values
     data = data.dropna()
 
@@ -101,10 +101,13 @@ def clean_transform_data(data):
     data['Year'] = data['Year'].astype(int)
     data['Month'] = data['Month'].astype(int)
     data['Day'] = data['Day'].astype(int)
-    data['Sales'] = data['Sales'].astype(float)
+    if include_sales:
+        data['Sales'] = data['Sales'].astype(float)
 
     # Normalize numerical features
-    numerical_features = ['Year', 'Month', 'Day', 'Sales']
+    numerical_features = ['Year', 'Month', 'Day']
+    if include_sales:
+        numerical_features.append('Sales')
     numerical_transformer = StandardScaler()
 
     # Combine transformations
@@ -147,7 +150,7 @@ def predict_sales(data):
         'Month': [1],
         'Day': [26]
     })
-    next_day = clean_transform_data(next_day)
+    next_day = clean_transform_data(next_day, include_sales=False)
     next_day_sales = best_model.predict(next_day)[0]
     
     return best_model, best_mse, next_day_sales
@@ -155,7 +158,7 @@ def predict_sales(data):
 # Plot sales predictions
 def plot_predictions(model, data):
     fig = px.line(data, x='Date', y='Sales', title='Sales Prediction')
-    fig.add_scatter(x=data['Date'], y=model.predict(data[['Year', 'Month', 'Day']]), mode='lines', name='Predicted Sales', line=dict(color='orange'))
+    fig.add_scatter(x=data['Date'], y=model.predict(data[['Year', 'Month', 'Day', 'Sales']]), mode='lines', name='Predicted Sales', line=dict(color='orange'))
     fig.update_layout(hovermode='x unified', plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font=dict(color='white'))
     st.plotly_chart(fig)
 
@@ -192,7 +195,7 @@ with col1:
 with col2:
     st.subheader(f"About {company}")
     company_info = fetch_company_info(ticker)
-    st.write(company_info, unsafe_allow_html=True)
+    st.write(f"<div style='text-align: left;'>{company_info}</div>", unsafe_allow_html=True)
 
     st.subheader(f"{company} Performance")
     df_stock = fetch_stock_data(ticker)

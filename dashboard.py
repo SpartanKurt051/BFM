@@ -147,8 +147,8 @@ def make_predictions(model, X_test, scaler):
 # Plot predictions
 def plot_predictions(dates, actual_prices, predictions, current_price, title):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=dates, y=actual_prices.flatten(), mode="lines", name="Actual Price"))
-    fig.add_trace(go.Scatter(x=dates, y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
+    fig.add_trace(go.Scatter(x=dates[:len(actual_prices)], y=actual_prices.flatten(), mode="lines", name="Actual Price"))
+    fig.add_trace(go.Scatter(x=dates[:len(predictions)], y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
     fig.update_layout(
         title=title,
         xaxis_title="Date",
@@ -206,11 +206,8 @@ def main():
         # Generate dates for the full range
         dates = pd.date_range(start="2020-01-01", end="2025-01-25", freq='D')
 
-        # Ensure predictions cover the entire date range
-        full_predictions = np.concatenate([actual_prices.flatten(), predictions.flatten()])
-
         # Plot the predictions
-        plot_predictions(dates, full_predictions, full_predictions, current_price, "Daily Opening Price Prediction")
+        plot_predictions(dates, actual_prices, predictions, current_price, "Daily Opening Price Prediction")
 
         st.subheader("Opening Price Data")
         st.dataframe(opening_price_data, height=200)

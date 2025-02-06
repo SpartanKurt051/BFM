@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
+import plotly.express as px
 
 # Define the companies and their CSV file names
 companies = {
@@ -18,20 +18,14 @@ def plot_actual_vs_predicted(company_name, file_name):
     
     # Set the date as the index for plotting
     data['Date'] = pd.to_datetime(data['Date']).dt.tz_localize(None)
-    data.set_index('Date', inplace=True)
     
     # Plot the actual and predicted opening prices
-    plt.figure(figsize=(14, 7))
-    plt.plot(data['Actual Price'], label='Actual Price')
-    plt.plot(data['Predicted Price'], label='Predicted Price', linestyle='--')
-    plt.title(f'{company_name} - Actual vs Predicted Opening Prices')
-    plt.xlabel('Date')
-    plt.ylabel('Price')
-    plt.legend()
-    plt.grid(True)
+    fig = px.line(data, x='Date', y=['Actual Price', 'Predicted Price'],
+                  labels={'value': 'Price', 'variable': 'Type'},
+                  title=f'{company_name} - Actual vs Predicted Opening Prices')
     
     # Use Streamlit to display the plot
-    st.pyplot(plt)
+    st.plotly_chart(fig)
 
 # Streamlit application
 st.title('Company Opening Prices Dashboard')

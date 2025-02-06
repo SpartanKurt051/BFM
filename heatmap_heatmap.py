@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 st.set_page_config(layout="wide")
 
 def main():
-    st.title("Heatmap Dashboard")
+    st.title("Company Weightage Heatmap")
 
     # Load data
     data_url = "https://raw.githubusercontent.com/SpartanKurt051/BFM/main/Heatmap.csv"
@@ -15,12 +15,12 @@ def main():
     # Strip any leading/trailing spaces from column names
     df.columns = df.columns.str.strip()
 
-    # Create a pivot table for heatmap
-    df_pivot = df.pivot_table(index='Company', values='Weight')
+    # Set the 'Company' column as index
+    df.set_index('Company', inplace=True)
 
     # Create heatmap
     fig, ax = plt.subplots(figsize=(10, 8))
-    sns.heatmap(df_pivot, annot=True, ax=ax, cmap="YlGnBu", cbar_kws={'label': 'Weightage'})
+    sns.heatmap(df, annot=True, cmap="YlGnBu", ax=ax)
     ax.set_title('Company Weightage Heatmap')
 
     # Display heatmap in Streamlit

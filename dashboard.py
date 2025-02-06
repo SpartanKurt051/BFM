@@ -158,7 +158,7 @@ def main():
     # Sidebar
     st.sidebar.header("Select Company")
     companies = {
-        "Adani Energy": "ADANIGREEN.NS",
+        "Adani Green Energy": "ADANIGREEN.NS",
         "Tata Power": "TATAPOWER.NS",
         "Jsw Energy": "JSWENERGY.NS",
         "NTPC": "NTPC.NS",
@@ -167,6 +167,15 @@ def main():
     }
     company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
     ticker = companies[company]
+
+    # Set IPO dates for specific companies
+    ipo_dates = {
+        "ADANIGREEN.NS": "April 7, 2020",
+        "JSWENERGY.NS": "December 7, 2009",
+        "NTPC.NS": "November 22, 2024",
+        "POWERGRID.NS": "September 10, 2007",
+        "NHPC.NS": "August 7, 2009"
+    }
 
     col1, col2, col3 = st.columns([3, 1.5, 1.5])
 
@@ -217,12 +226,12 @@ def main():
         
         # Fetch alternative data if main source fails
         if eps_pe_ipo_kpi["IPO Date"] is None or eps_pe_ipo_kpi["KPI"] is None:
-            alpha_vantage_api_key = "K9ZO1R0GDZ2AV6U9"
+            alpha_vantage_api_key = "YOUR_ALPHA_VANTAGE_API_KEY"
             alternative_data = fetch_alternative_kpi_ipo(ticker, alpha_vantage_api_key)
             ipo_date = alternative_data["IPO Date"]
             kpi = alternative_data["KPI"]
         else:
-            ipo_date = eps_pe_ipo_kpi["IPO Date"]
+            ipo_date = eps_pe_ipo_kpi.get("IPO Date", ipo_dates.get(ticker, "N/A"))
             kpi = eps_pe_ipo_kpi["KPI"]
         
         kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']} | PE Ratio: {eps_pe_ipo_kpi['PE Ratio']} | IPO Date: {ipo_date} | KPI: {kpi} | Current Price: ₹{current_price:.2f}"

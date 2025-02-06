@@ -472,29 +472,26 @@ def main():
             padded_weights = np.pad(df['Weight'].values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values=np.nan)
             padded_companies = np.pad(df.index.values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values='')
 
-            fig, ax = plt.subplots(figsize=(5, 3))
+            # Create interactive heatmap using Plotly
             heatmap_data = padded_weights.reshape(num_rows, num_cols)
+            hovertext = padded_companies.reshape(num_rows, num_cols)
 
-            # Use a custom colormap with shades of brown
-            cmap = sns.light_palette("brown", as_cmap=True)
+            fig = go.Figure(data=go.Heatmap(
+                z=heatmap_data,
+                text=hovertext,
+                hoverinfo='text',
+                colorscale='YlOrBr',
+                showscale=True,
+                colorbar=dict(title='Weightage')
+            ))
 
-            sns.heatmap(heatmap_data, annot=False, cmap=cmap, cbar_kws={'label': 'Weightage'}, linewidths=.5, ax=ax, annot_kws={"size": 8})
+            fig.update_layout(
+                title='Company Weightage Heatmap',
+                xaxis=dict(showticklabels=False),
+                yaxis=dict(showticklabels=False)
+            )
 
-            # Add annotations on hover
-            for y in range(heatmap_data.shape[0]):
-                for x in range(heatmap_data.shape[1]):
-                    if not np.isnan(heatmap_data[y, x]):
-                        ax.text(x + 0.5, y + 0.5, padded_companies.reshape(num_rows, num_cols)[y, x],
-                                ha='center', va='center', color='black', fontsize=8, alpha=0)
-
-            ax.set_title('Company Weightage Heatmap')
-
-            # Adjust font size and layout
-            plt.xticks(fontsize=8)
-            plt.yticks(fontsize=8)
-
-            # Display heatmap in Streamlit
-            st.pyplot(fig)
+            st.plotly_chart(fig)
 
         with col3:
             st.subheader("Live News")

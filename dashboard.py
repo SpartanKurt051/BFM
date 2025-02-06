@@ -20,15 +20,15 @@ def plot_actual_vs_predicted(company_name, file_name):
     data['Date'] = pd.to_datetime(data['Date']).dt.tz_localize(None)
     data.set_index('Date', inplace=True)
     
-    # Calculate the error percentage for January 25, 2025
-    specific_date = pd.Timestamp('2025-01-25')
+    # Calculate the error percentage for January 24, 2025
+    specific_date = pd.Timestamp('2025-01-24')
     if specific_date in data.index:
         actual_price = data.loc[specific_date, 'Actual Price']
         predicted_price = data.loc[specific_date, 'Predicted Price']
         error_percentage = abs((actual_price - predicted_price) / actual_price) * 100
-        error_text = f"Error percentage as on January 25, 2025: {error_percentage:.2f}%"
+        error_text = f"Error percentage as on January 24, 2025: {error_percentage:.2f}%"
     else:
-        error_text = "No data for January 25, 2025"
+        error_text = "No data for January 24, 2025"
     
     # Create the figure
     fig = go.Figure()

@@ -280,7 +280,7 @@ def main():
             st.write(f"KPI: {kpi}")
             st.write(f"Current Price: ₹{current_price:.2f}")
 
-        st.write("Data fetched successfully! Use this for further analysis and prediction.")
+       
 
 if __name__ == "__main__":
     main()

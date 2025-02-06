@@ -18,44 +18,26 @@ def plot_actual_vs_predicted(company_name, file_name):
     
     # Set the date as the index for plotting
     data['Date'] = pd.to_datetime(data['Date']).dt.tz_localize(None)
-    data.set_index('Date', inplace=True)
-    
-    # Calculate the error percentage for January 26, 2024
-    specific_date = pd.Timestamp('2024-01-26')
-    if specific_date in data.index:
-        actual_price = data.loc[specific_date, 'Actual Price']
-        predicted_price = data.loc[specific_date, 'Predicted Price']
-        error_percentage = abs((actual_price - predicted_price) / actual_price) * 100
-        error_text = f"Error Percentage on 26-01-2024: {error_percentage:.2f}%"
-    else:
-        error_text = "No data for 26-01-2024"
     
     # Create the figure
     fig = go.Figure()
     
     # Add actual price trace
-    fig.add_trace(go.Scatter(x=data.index, y=data['Actual Price'], mode='lines', name='Actual Price', line=dict(color='blue')))
+    fig.add_trace(go.Scatter(x=data['Date'], y=data['Actual Price'], mode='lines', name='Actual Price', line=dict(color='blue')))
     
     # Add predicted price trace
-    fig.add_trace(go.Scatter(x=data.index, y=data['Predicted Price'], mode='lines', name='Predicted Price', line=dict(color='red', dash='dash')))
+    fig.add_trace(go.Scatter(x=data['Date'], y=data['Predicted Price'], mode='lines', name='Predicted Price', line=dict(color='red', dash='dash')))
     
     # Update layout with titles and labels
     fig.update_layout(
         title=f'{company_name} - Actual vs Predicted Opening Prices',
-        xaxis_title='Error Percentage',
+        xaxis_title='Date',
         yaxis_title='Price',
         hovermode='x unified'
     )
     
-    # Update hover information
-    fig.update_traces(
-        hovertemplate='<b>Date</b>: %{x|%d-%m-%Y}<br><b>Actual Price</b>: %{y}<br><b>Predicted Price</b>: %{customdata[0]}<extra></extra>',
-        customdata=[data['Predicted Price']]
-    )
-    
-    # Use Streamlit to display the plot and error percentage
+    # Use Streamlit to display the plot
     st.plotly_chart(fig)
-    st.write(error_text)
 
 # Streamlit application
 st.title('Company Opening Prices Dashboard')

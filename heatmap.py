@@ -39,8 +39,8 @@ def main():
     stock_data = {k: v for k, v in stock_data.items() if not v.empty}
 
     # Create a DataFrame with the closing prices of the stocks
-    df = pd.DataFrame(stock_data)
-    if not df.empty:
+    if stock_data:
+        df = pd.DataFrame(stock_data)
         df = df.pct_change().corr()
 
         # Plot the heatmap

@@ -94,7 +94,7 @@ def fetch_current_stock_price(ticker):
     return stock.history(period="1d")["Close"].iloc[-1]
 
 # Plot actual vs predicted prices
-def plot_actual_vs_predicted(company_name, file_name):
+def plot_actual_vs_predicted(company_name, file_name, ticker):
     # Load the data
     data = pd.read_csv(file_name)
     
@@ -112,6 +112,9 @@ def plot_actual_vs_predicted(company_name, file_name):
     else:
         error_text = "No data for January 24, 2025"
     
+    # Fetch the current stock price
+    current_price = fetch_current_stock_price(ticker)
+    
     # Create the figure
     fig = go.Figure()
     
@@ -126,7 +129,21 @@ def plot_actual_vs_predicted(company_name, file_name):
         title=f'{company_name} - Actual vs Predicted Opening Prices',
         xaxis_title='Date',
         yaxis_title='Price',
-        hovermode='x unified'
+        hovermode='x unified',
+        annotations=[
+            dict(
+                x=data.index[-1],
+                y=current_price,
+                xref='x',
+                yref='y',
+                text=f'Current Price: {current_price:.2f}',
+                showarrow=True,
+                arrowhead=2,
+                ax=20,
+                ay=-30,
+                font=dict(color="green")
+            )
+        ]
     )
     
     # Update hover information
@@ -165,7 +182,7 @@ def main():
         opening_price_data = load_opening_price_data(ticker)
         
         # Plot the predictions
-        plot_actual_vs_predicted(company, f"{company}_opening_price_data_with_predictions.csv")
+        plot_actual_vs_predicted(company, f"{company}_opening_price_data_with_predictions.csv", ticker)
 
         year = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
 

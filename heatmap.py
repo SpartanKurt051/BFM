@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import yfinance as yf
@@ -40,6 +39,7 @@ def main():
     # Plot the heatmap
     fig, ax = plt.subplots(figsize=(10, 8))
     sns.heatmap(df, annot=True, cmap='coolwarm', ax=ax)
+    plt.tight_layout()  # Ensure the plot fits into the figure area
 
     st.pyplot(fig)
 

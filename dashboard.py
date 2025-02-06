@@ -206,6 +206,9 @@ def main():
         # Generate dates for the full range
         dates = pd.date_range(start="2020-01-01", end="2025-01-25", freq='D')
 
+        # Fetch current stock price
+        current_price = fetch_current_stock_price(ticker)
+
         # Plot the predictions
         plot_predictions(dates, actual_prices, predictions, current_price, "Daily Opening Price Prediction")
 

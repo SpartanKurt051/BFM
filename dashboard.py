@@ -163,7 +163,7 @@ def main():
 
         # Fetch current stock price
         current_price = fetch_current_stock_price(ticker)
-        st.markdown(f"<h2 style='color: green;'>Current Stock Price: ₹{current_price:.2f}</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h4 style='color: green;'>Current Stock Price: ₹{current_price:.2f}</h4>", unsafe_allow_html=True)
 
         # Perform prediction on page load
         opening_price_data = load_opening_price_data(ticker)
@@ -180,7 +180,7 @@ def main():
     with col2:
         st.subheader(f"About {company}")
         company_info = fetch_company_info(ticker)
-        st.write(company_info)
+        st.text_area("Company Information", company_info, height=150)
 
         st.subheader(f"{company} Performance")
         df_stock = fetch_stock_data(ticker)

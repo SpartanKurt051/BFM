@@ -158,7 +158,7 @@ def plot_predictions(dates, actual_prices, predictions, current_price, title):
         xaxis_title="Date",
         yaxis_title="Price (₹)",
         template="plotly_dark",
-        xaxis=dict(range=["2020-01-01", "2025-01-26"], fixedrange=True),
+        xaxis=dict(range=["2024-01-01", "2025-01-25"], fixedrange=True),
         annotations=[
             dict(
                 x=0.5,
@@ -208,7 +208,7 @@ def main():
         actual_prices = scaler.inverse_transform(y_test.reshape(-1, 1))
 
         # Generate dates for the full range
-        dates = pd.date_range(start="2020-01-01", end="2025-01-25", freq='D')
+        dates = pd.date_range(start="2024-01-01", end="2025-01-25", freq='D')
 
         # Fetch current stock price
         current_price = fetch_current_stock_price(ticker)

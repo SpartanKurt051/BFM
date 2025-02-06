@@ -203,5 +203,5 @@ def main():
 
     st.write("Data fetched successfully! Use this for further analysis and prediction.")
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     main()

@@ -199,15 +199,17 @@ def main():
         for article in news_articles:
             news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
         st.text_area("Live News", news_text, height=150)
-
+    
         st.subheader(f"{company} EPS, PE, IPO KPI")
         eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
         
-        # Include current price fetched earlier
-        kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']} | PE Ratio: {eps_pe_ipo_kpi['PE Ratio']} | IPO Date: {eps_pe_ipo_kpi['IPO Date']} | KPI: {eps_pe_ipo_kpi['KPI']} | Current Price: ₹{current_price:.2f}"
+        # Ensure IPO Date and KPI are not None
+        ipo_date = eps_pe_ipo_kpi.get('IPO Date', 'N/A')
+        kpi = eps_pe_ipo_kpi.get('KPI', 'N/A')
+    
+        kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']} | PE Ratio: {eps_pe_ipo_kpi['PE Ratio']} | IPO Date: {ipo_date} | KPI: {kpi} | Current Price: ₹{eps_pe_ipo_kpi['Current Price']:.2f}"
         st.write(kpi_info)
-
-    st.write("Data fetched successfully! Use this for further analysis and prediction.")
+        st.write("Data fetched successfully! Use this for further analysis and prediction.")
 
 if __name__ == "__main__":
     main()

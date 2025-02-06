@@ -28,16 +28,20 @@ def main():
     padded_weights = np.pad(df['Weight'].values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values=np.nan)
     padded_companies = np.pad(df.index.values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values='')
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(8, 5))
     heatmap_data = padded_weights.reshape(num_rows, num_cols)
 
     # Use a custom colormap with shades of brown
     cmap = sns.light_palette("brown", as_cmap=True)
 
     sns.heatmap(heatmap_data, annot=padded_companies.reshape(num_rows, num_cols),
-                fmt='', cmap=cmap, cbar_kws={'label': 'Weightage'}, linewidths=.5, ax=ax)
+                fmt='', cmap=cmap, cbar_kws={'label': 'Weightage'}, linewidths=.5, ax=ax, annot_kws={"size": 8})
 
     ax.set_title('Company Weightage Heatmap')
+
+    # Adjust font size and layout
+    plt.xticks(fontsize=8)
+    plt.yticks(fontsize=8)
 
     # Display heatmap in Streamlit
     st.pyplot(fig)

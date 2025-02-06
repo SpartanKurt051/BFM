@@ -414,7 +414,7 @@ def main():
     page = st.sidebar.selectbox("Choose a page", ["Page 1", "Page 2"])
 
     if page == "Page 2":
-        col1, col2, col3 = st.columns([3, 1, 1])
+        col1, col2, col3 = st.columns([3, 3, 3])
 
         with col1:
             st.subheader("Opening Price Prediction")
@@ -448,7 +448,6 @@ def main():
             # Display the selected volume range
             st.write(f"Selected Volume Range: {volume_range}")
 
-        with col3:
             st.subheader("Company Weightage Heatmap")
 
             # Load heatmap data
@@ -490,6 +489,32 @@ def main():
             )
 
             st.plotly_chart(fig)
+
+        with col3:
+            st.subheader("Live News")
+            news_api_key = "31739ed855eb4759908a898ab99a43e7"
+            query = company
+            news_articles = fetch_live_news(news_api_key, query)
+            news_text = ""
+            for article in news_articles:
+                news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
+            st.text_area("Live News", news_text, height=150)
+        
+            st.subheader(f"{company} EPS, PE, IPO KPI")
+            eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
+            
+            # Fetch alternative data if main source fails
+            if eps_pe_ipo_kpi["IPO Date"] is None or eps_pe_ipo_kpi["KPI"] is None:
+                alpha_vantage_api_key = "YOUR_ALPHA_VANTAGE_API_KEY"
+                alternative_data = fetch_alternative_kpi_ipo(ticker, alpha_vantage_api_key)
+                ipo_date = alternative_data["IPO Date"]
+                kpi = alternative_data["KPI"]
+            else:
+                ipo_date = eps_pe_ipo_kpi.get("IPO Date", ipo_dates.get(ticker, "N/A"))
+                kpi = eps_pe_ipo_kpi["KPI"]
+            
+            kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']} | PE Ratio: {eps_pe_ipo_kpi['PE Ratio']} | IPO Date: {ipo_date} | KPI: {kpi} | Current Price: ₹{current_price:.2f}"
+            st.write(kpi_info)
 
         st.write("Data fetched successfully! Use this for further analysis and prediction.")
 

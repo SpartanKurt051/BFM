@@ -31,8 +31,11 @@ def main():
     fig, ax = plt.subplots(figsize=(15, 8))
     heatmap_data = padded_weights.reshape(num_rows, num_cols)
 
+    # Use a custom colormap with shades of the same color
+    cmap = sns.light_palette("blue", as_cmap=True)
+
     sns.heatmap(heatmap_data, annot=padded_companies.reshape(num_rows, num_cols),
-                fmt='', cmap="YlGnBu", cbar_kws={'label': 'Weightage'}, linewidths=.5, ax=ax)
+                fmt='', cmap=cmap, cbar_kws={'label': 'Weightage'}, linewidths=.5, ax=ax)
 
     ax.set_title('Company Weightage Heatmap')
 

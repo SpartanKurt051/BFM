@@ -148,7 +148,7 @@ def make_predictions(model, X_test, scaler):
 def plot_predictions(dates, actual_prices, predictions, current_price, title):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=dates[:len(actual_prices)], y=actual_prices.flatten(), mode="lines", name="Actual Price"))
-    fig.add_trace(go.Scatter(x=dates[:len(predictions)], y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
+    fig.add_trace(go.Scatter(x=dates[len(dates) - len(predictions):], y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
     fig.update_layout(
         title=title,
         xaxis_title="Date",

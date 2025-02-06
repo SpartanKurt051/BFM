@@ -28,7 +28,7 @@ def main():
     padded_weights = np.pad(df['Weight'].values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values=np.nan)
     padded_companies = np.pad(df.index.values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values='')
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(5, 3))
     heatmap_data = padded_weights.reshape(num_rows, num_cols)
 
     # Use a custom colormap with shades of brown

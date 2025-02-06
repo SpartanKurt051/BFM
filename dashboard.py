@@ -139,6 +139,18 @@ def plot_actual_vs_predicted(company_name, file_name):
     st.plotly_chart(fig)
     st.write(error_text)
 
+# Fetch alternative KPI and IPO data from Alpha Vantage
+@st.cache_data
+def fetch_alternative_kpi_ipo(ticker, api_key):
+    url = f'https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey={api_key}'
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+    data = response.json()
+    return {
+        "IPO Date": data.get("IPODate", "N/A"),
+        "KPI": data.get("ProfitMargin", "N/A")  # Assuming KPI is represented by Profit Margin
+    }
+
 # Main function
 def main():
     st.title("📈 Stock Market Dashboard")
@@ -203,13 +215,20 @@ def main():
         st.subheader(f"{company} EPS, PE, IPO KPI")
         eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
         
-        # Ensure IPO Date and KPI are not None
-        ipo_date = eps_pe_ipo_kpi.get('IPO Date', 'N/A')
-        kpi = eps_pe_ipo_kpi.get('KPI', 'N/A')
-    
-        kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']} | PE Ratio: {eps_pe_ipo_kpi['PE Ratio']} | IPO Date: {ipo_date} | KPI: {kpi} | Current Price: ₹{eps_pe_ipo_kpi['Current Price']:.2f}"
+        # Fetch alternative data if main source fails
+        if eps_pe_ipo_kpi["IPO Date"] is None or eps_pe_ipo_kpi["KPI"] is None:
+            alpha_vantage_api_key = "K9ZO1R0GDZ2AV6U9"
+            alternative_data = fetch_alternative_kpi_ipo(ticker, alpha_vantage_api_key)
+            ipo_date = alternative_data["IPO Date"]
+            kpi = alternative_data["KPI"]
+        else:
+            ipo_date = eps_pe_ipo_kpi["IPO Date"]
+            kpi = eps_pe_ipo_kpi["KPI"]
+        
+        kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']} | PE Ratio: {eps_pe_ipo_kpi['PE Ratio']} | IPO Date: {ipo_date} | KPI: {kpi} | Current Price: ₹{current_price:.2f}"
         st.write(kpi_info)
-        st.write("Data fetched successfully! Use this for further analysis and prediction.")
+
+    st.write("Data fetched successfully! Use this for further analysis and prediction.")
 
 if __name__ == "__main__":
     main()

@@ -217,19 +217,19 @@ def main():
         st.dataframe(filtered_data, height=200)
 
     with col2:
-    st.subheader(f"About {company}")
-    company_info = fetch_company_info(ticker)
-    st.write(company_info)
-
-    st.subheader(f"{company} Performance")
-    df_stock = fetch_stock_data(ticker)
-    year_data = df_stock[df_stock.index.year == year]
+        st.subheader(f"About {company}")
+        company_info = fetch_company_info(ticker)
+        st.write(company_info)
     
-    # Slider to highlight values without triggering ML algorithm
-    volume_range = st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
-    
-    # Display the selected volume range
-    st.write(f"Selected Volume Range: {volume_range}")
+        st.subheader(f"{company} Performance")
+        df_stock = fetch_stock_data(ticker)
+        year_data = df_stock[df_stock.index.year == year]
+        
+        # Slider to highlight values without triggering ML algorithm
+        volume_range = st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
+        
+        # Display the selected volume range
+        st.write(f"Selected Volume Range: {volume_range}")
     
     with col3:
         st.subheader("Live News")

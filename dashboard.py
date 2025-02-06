@@ -1,115 +1,34 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
 import yfinance as yf
-import plotly.graph_objects as go
+import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import mean_absolute_error, mean_squared_error
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
-import requests
+import numpy as np
 
-st.set_page_config(layout="wide")
+# Define the companies and their tickers
+companies = {
+    "Adani Energy": "ADANIGREEN.NS",
+    "Tata Power": "TATAPOWER.NS",
+    "Jsw Energy": "JSWENERGY.NS",
+    "NTPC": "NTPC.NS",
+    "Power Grid Corp": "POWERGRID.NS",
+    "NHPC": "NHPC.NS"
+}
 
-def load_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
-# Load CSS
-load_css("styles.css")
-
-@st.cache_data
-def fetch_stock_data(ticker):
-    return yf.download(ticker, start="2020-01-01", end="2025-01-25")
-
-@st.cache_data
-def fetch_fundamental_data(ticker):
+# Fetch and save opening price data
+def fetch_and_save_opening_price_data(ticker, company_name):
     stock = yf.Ticker(ticker)
-    info = stock.info
-    financials = stock.financials
-    balance_sheet = stock.balance_sheet
-    cashflow = stock.cashflow
-    
-    dates = pd.date_range(start="2020-01-01", end="2025-01-25", freq='D')
-    fundamental_data = []
-    
-    for date in dates:
-        try:
-            total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index) else None
-            net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
-        except Exception:
-            total_revenue, debt_to_equity, net_cashflow = None, None, None
-        
-        data = {
-            "Date": date,
-            "Market Cap": info.get("marketCap"),
-            "Enterprise Value": info.get("enterpriseValue"),
-            "P/E Ratio": info.get("trailingPE"),
-            "Debt-to-Equity Ratio": debt_to_equity,
-            "Total Revenue": total_revenue,
-            "Net Cash Flow": net_cashflow
-        }
-        fundamental_data.append(data)
-    
-    return pd.DataFrame(fundamental_data)
-
-@st.cache_data
-def fetch_live_news(api_key, query):
-    url = f'https://newsapi.org/v2/everything?q={query}&sortBy=publishedAt&apiKey={api_key}'
-    response = requests.get(url)
-    response.raise_for_status()  # Raise an exception for HTTP errors
-    news_data = response.json()
-    return news_data['articles'] if 'articles' in news_data else []
-
-@st.cache_data
-def fetch_eps_pe_ipo_kpi(ticker):
-    stock = yf.Ticker(ticker)
-    info = stock.info
-    data = {
-        "EPS": info.get("trailingEps"),
-        "PE Ratio": info.get("trailingPE"),
-        "IPO Date": info.get("ipoDate"),
-        "KPI": info.get("kpi"),
-        "Current Price": info.get("regularMarketPrice")
-    }
-    return data
-
-@st.cache_data
-def fetch_company_info(ticker):
-    stock = yf.Ticker(ticker)
-    info = stock.info
-    return info.get("longBusinessSummary", "No information available.")
-
-# Load opening price data for prediction
-@st.cache_data
-def load_opening_price_data(ticker):
-    stock = yf.Ticker(ticker)
-    hist = stock.history(period="max")
-    hist = hist[hist.index <= '2025-01-25']  # Limit data till 25th January 2025
+    hist = stock.history(start="2020-01-01", end="2025-01-26")
     hist.reset_index(inplace=True)
-    hist['Year'] = hist['Date'].dt.year
-    hist['Month'] = hist['Date'].dt.month
-    hist['Day'] = hist['Date'].dt.day
-    hist['Opening Price'] = hist['Open']  # Assuming 'Open' prices as 'Opening Price'
-    return hist
-
-@st.cache_data
-def fetch_current_stock_price(ticker):
-    stock = yf.Ticker(ticker)
-    return stock.history(period="1d")["Close"].iloc[-1]
+    hist['Opening Price'] = hist['Open']
+    hist = hist[['Date', 'Opening Price']]
+    hist.to_csv(f'{company_name}_opening_price_data.csv', index=False)
 
 # Normalize Data
 def normalize_data(data):
     scaler = MinMaxScaler(feature_range=(0, 1))
     data_scaled = scaler.fit_transform(data[['Opening Price']])
     return data_scaled, scaler
-
-# Split Data
-def split_data(data_scaled):
-    train_size = int(len(data_scaled) * 0.8)
-    train_data, test_data = data_scaled[:train_size], data_scaled[train_size:]
-    return train_data, test_data
 
 # Create Sequences for LSTM
 def create_sequences(data, seq_length=60):
@@ -119,10 +38,10 @@ def create_sequences(data, seq_length=60):
         y.append(data[i + seq_length])
     return np.array(X), np.array(y)
 
-# Build LSTM Model
-def build_lstm_model(input_shape):
+# Build and Train LSTM Model
+def build_and_train_lstm_model(X_train, y_train, X_test, y_test):
     model = Sequential([
-        LSTM(50, return_sequences=True, input_shape=input_shape),
+        LSTM(50, return_sequences=True, input_shape=(X_train.shape[1], 1)),
         Dropout(0.2),
         LSTM(50, return_sequences=False),
         Dropout(0.2),
@@ -130,11 +49,6 @@ def build_lstm_model(input_shape):
         Dense(1)
     ])
     model.compile(optimizer="adam", loss="mean_squared_error")
-    return model
-
-# Train LSTM Model
-@st.cache_data
-def train_lstm_model(model, X_train, y_train, X_test, y_test):
     model.fit(X_train, y_train, epochs=20, batch_size=32, validation_data=(X_test, y_test))
     return model
 
@@ -144,119 +58,25 @@ def make_predictions(model, X_test, scaler):
     predictions = scaler.inverse_transform(predictions)
     return predictions
 
-# Calculate error percentage
-def calculate_error_percentage(actual, predicted):
-    return np.mean(np.abs((actual - predicted) / actual)) * 100
+# Add predicted prices to CSV
+def add_predicted_prices_to_csv(company_name):
+    data = pd.read_csv(f'{company_name}_opening_price_data.csv')
+    data_scaled, scaler = normalize_data(data)
+    train_size = int(len(data_scaled) * 0.8)
+    train_data, test_data = data_scaled[:train_size], data_scaled[train_size:]
+    X_train, y_train = create_sequences(train_data)
+    X_test, y_test = create_sequences(test_data)
+    
+    model = build_and_train_lstm_model(X_train, y_train, X_test, y_test)
+    predictions = make_predictions(model, X_test, scaler)
+    
+    data['Predicted Price'] = np.nan
+    data.loc[len(data) - len(predictions):, 'Predicted Price'] = predictions.flatten()
+    data.to_csv(f'{company_name}_opening_price_data_with_predictions.csv', index=False)
 
-# Plot predictions
-def plot_predictions(dates, actual_prices, predictions, current_price, title):
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=dates[:len(actual_prices)], y=actual_prices.flatten(), mode="lines", name="Actual Price"))
-    fig.add_trace(go.Scatter(x=dates[len(dates) - len(predictions):], y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
-    fig.update_layout(
-        title=title,
-        xaxis_title="Date",
-        yaxis_title="Price (₹)",
-        template="plotly_dark",
-        xaxis=dict(range=["2024-01-01", "2025-01-25"], fixedrange=True),
-        annotations=[
-            dict(
-                x=0.5,
-                y=1.1,
-                xref="paper",
-                yref="paper",
-                text=f"Current Stock Price: ₹{current_price:.2f}",
-                showarrow=False,
-                font=dict(size=14, color="green")
-            )
-        ]
-    )
-    st.plotly_chart(fig)
+# Process each company
+for company_name, ticker in companies.items():
+    fetch_and_save_opening_price_data(ticker, company_name)
+    add_predicted_prices_to_csv(company_name)
 
-# Main function
-def main():
-    st.title("📈 Stock Market Dashboard")
-
-    # Sidebar
-    st.sidebar.header("Select Company")
-    companies = {
-        "Adani Energy": "ADANIGREEN.NS",
-        "Tata Power": "TATAPOWER.NS",
-        "Jsw Energy": "JSWENERGY.NS",
-        "NTPC": "NTPC.NS",
-        "Power Grid Corp": "POWERGRID.NS",
-        "NHPC": "NHPC.NS"
-    }
-    company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
-    ticker = companies[company]
-
-    col1, col2, col3 = st.columns([3, 1.5, 1.5])
-
-    with col1:
-        st.subheader("Opening Price Prediction")
-
-        # Perform prediction on page load
-        opening_price_data = load_opening_price_data(ticker)
-        data_scaled, scaler = normalize_data(opening_price_data)
-        train_data, test_data = split_data(data_scaled)
-        X_train, y_train = create_sequences(train_data)
-        X_test, y_test = create_sequences(test_data)
-
-        model = build_lstm_model((X_train.shape[1], 1))
-        model = train_lstm_model(model, X_train, y_train, X_test, y_test)
-        predictions = make_predictions(model, X_test, scaler)
-        actual_prices = scaler.inverse_transform(y_test.reshape(-1, 1))
-
-        # Generate dates for the full range
-        dates = pd.date_range(start="2024-01-01", end="2025-01-25", freq='D')
-
-        # Fetch current stock price
-        current_price = fetch_current_stock_price(ticker)
-
-        # Plot the predictions
-        plot_predictions(dates[:len(predictions)], actual_prices, predictions, current_price, "Daily Opening Price Prediction")
-
-        # Calculate error percentage for January 26, 2025
-        actual_value = actual_prices[-1]
-        predicted_value = predictions[-1]
-        error_percentage = calculate_error_percentage(actual_value, predicted_value)
-        st.write(f"Error Percentage for January 26, 2025: {error_percentage:.2f}%")
-
-        year = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
-
-        st.subheader("Opening Price Data")
-        filtered_data = opening_price_data[opening_price_data['Year'] == year]
-        st.dataframe(filtered_data, height=200)
-
-    with col2:
-        st.subheader(f"About {company}")
-        company_info = fetch_company_info(ticker)
-        st.write(company_info)
-
-        st.subheader(f"{company} Performance")
-        df_stock = fetch_stock_data(ticker)
-        year_data = df_stock[df_stock.index.year == year]
-        volume_range = st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
-        
-        # Display the selected volume range
-        st.write(f"Selected Volume Range: {volume_range}")
-
-    with col3:
-        st.subheader("Live News")
-        news_api_key = "31739ed855eb4759908a898ab99a43e7"
-        query = company
-        news_articles = fetch_live_news(news_api_key, query)
-        news_text = ""
-        for article in news_articles:
-            news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
-        st.text_area("Live News", news_text, height=150)
-
-        st.subheader(f"{company} EPS, PE, IPO KPI")
-        eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-        kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']}  |  **PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}  |  **IPO Date: {eps_pe_ipo_kpi['IPO Date']}  |  **KPI: {eps_pe_ipo_kpi['KPI']}  |  *Current Price: {eps_pe_ipo_kpi['Current Price']}"
-        st.write(kpi_info)
-
-    st.write("Data fetched successfully! Use this for further analysis and prediction.")
-
-if __name__ == "__main__":
-    main()
+# Note: Use Git commands to commit and push the files to the GitHub repository.

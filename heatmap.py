@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import yfinance as yf
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 st.set_page_config(layout="wide")
 
@@ -28,7 +26,7 @@ def fetch_stock_data(ticker):
     return data['Close']
 
 def main():
-    st.title("🔍 NIFTY Energy Top 10 Companies Heatmap")
+    st.title("🔍 NIFTY Energy Top 10 Companies Stock Data")
 
     # Fetch data for each company
     stock_data = {}
@@ -41,16 +39,13 @@ def main():
     # Create a DataFrame with the closing prices of the stocks
     if stock_data:
         df = pd.DataFrame(stock_data)
-        df = df.pct_change().corr()
+        df.to_csv("nifty_energy_stocks.csv")
 
-        # Plot the heatmap
-        fig, ax = plt.subplots(figsize=(10, 8))
-        sns.heatmap(df, annot=True, cmap='coolwarm', ax=ax)
-        plt.tight_layout()  # Ensure the plot fits into the figure area
-
-        st.pyplot(fig)
+        # Load the CSV file and display it
+        st.write("### Stock Data CSV")
+        st.dataframe(df)
     else:
-        st.write("No data available to display the heatmap.")
+        st.write("No data available to display.")
 
 if __name__ == "__main__":
     main()

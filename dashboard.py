@@ -36,7 +36,10 @@ def plot_actual_vs_predicted(company_name, file_name):
 # Streamlit application
 st.title('Company Opening Prices Dashboard')
 
-# Plot graphs for all companies
-for company_name, file_name in companies.items():
-    st.header(company_name)
-    plot_actual_vs_predicted(company_name, file_name)
+# Add a dropdown to select a company
+selected_company = st.selectbox('Select a company', list(companies.keys()))
+
+if selected_company:
+    file_name = companies[selected_company]
+    st.header(selected_company)
+    plot_actual_vs_predicted(selected_company, file_name)

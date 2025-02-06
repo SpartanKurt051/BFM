@@ -202,7 +202,9 @@ def main():
 
         st.subheader(f"{company} EPS, PE, IPO KPI")
         eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-        kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']}  |  **PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}  |  **IPO Date: {eps_pe_ipo_kpi['IPO Date']}  |  **KPI: {eps_pe_ipo_kpi['KPI']}  |  *Current Price: {eps_pe_ipo_kpi['Current Price']}"
+        
+        # Include current price fetched earlier
+        kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']} | PE Ratio: {eps_pe_ipo_kpi['PE Ratio']} | IPO Date: {eps_pe_ipo_kpi['IPO Date']} | KPI: {eps_pe_ipo_kpi['KPI']} | Current Price: ₹{current_price:.2f}"
         st.write(kpi_info)
 
     st.write("Data fetched successfully! Use this for further analysis and prediction.")

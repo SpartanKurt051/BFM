@@ -1,4 +1,5 @@
 import pandas as pd
+import streamlit as st
 import matplotlib.pyplot as plt
 
 # Define the companies and their CSV file names
@@ -14,11 +15,11 @@ companies = {
 def plot_actual_vs_predicted(company_name, file_name):
     # Load the data
     data = pd.read_csv(file_name)
-
+    
     # Set the date as the index for plotting
     data['Date'] = pd.to_datetime(data['Date']).dt.tz_localize(None)
     data.set_index('Date', inplace=True)
-
+    
     # Plot the actual and predicted opening prices
     plt.figure(figsize=(14, 7))
     plt.plot(data['Actual Price'], label='Actual Price')
@@ -28,8 +29,14 @@ def plot_actual_vs_predicted(company_name, file_name):
     plt.ylabel('Price')
     plt.legend()
     plt.grid(True)
-    plt.show()
+    
+    # Use Streamlit to display the plot
+    st.pyplot(plt)
+
+# Streamlit application
+st.title('Company Opening Prices Dashboard')
 
 # Plot graphs for all companies
 for company_name, file_name in companies.items():
+    st.header(company_name)
     plot_actual_vs_predicted(company_name, file_name)

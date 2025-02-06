@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 st.set_page_config(layout="wide")
 
@@ -21,12 +22,16 @@ def main():
     # Generate a grid layout for the heatmap
     num_companies = df.shape[0]
     num_cols = 5  # Define the number of columns in the "periodic table"
-    num_rows = (num_companies // num_cols) + 1
+    num_rows = int(np.ceil(num_companies / num_cols))
+
+    # Pad the data to fit into the grid layout
+    padded_weights = np.pad(df['Weight'].values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values=np.nan)
+    padded_companies = np.pad(df.index.values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values='')
 
     fig, ax = plt.subplots(figsize=(15, 8))
-    heatmap_data = df['Weight'].values.reshape(num_rows, num_cols)
+    heatmap_data = padded_weights.reshape(num_rows, num_cols)
 
-    sns.heatmap(heatmap_data, annot=df.index.values.reshape(num_rows, num_cols),
+    sns.heatmap(heatmap_data, annot=padded_companies.reshape(num_rows, num_cols),
                 fmt='', cmap="YlGnBu", cbar_kws={'label': 'Weightage'}, linewidths=.5, ax=ax)
 
     ax.set_title('Company Weightage Heatmap')

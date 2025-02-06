@@ -31,8 +31,8 @@ def fetch_fundamental_data(ticker):
     for date in dates:
         try:
             total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index) else None
-            net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
+            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance sheet.index and "Total Equity" in balance sheet.index) else None
+            net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow index else None
         except Exception:
             total_revenue, debt_to_equity, net_cashflow = None, None, None
         
@@ -94,7 +94,7 @@ def fetch_current_stock_price(ticker):
     return stock.history(period="1d")["Close"].iloc[-1]
 
 # Plot actual vs predicted prices
-def plot_actual_vs_predicted(company_name, file_name, ticker):
+def plot_actual_vs_predicted(company_name, file_name):
     # Load the data
     data = pd.read_csv(file_name)
     
@@ -112,9 +112,6 @@ def plot_actual_vs_predicted(company_name, file_name, ticker):
     else:
         error_text = "No data for January 24, 2025"
     
-    # Fetch the current stock price
-    current_price = fetch_current_stock_price(ticker)
-    
     # Create the figure
     fig = go.Figure()
     
@@ -129,21 +126,7 @@ def plot_actual_vs_predicted(company_name, file_name, ticker):
         title=f'{company_name} - Actual vs Predicted Opening Prices',
         xaxis_title='Date',
         yaxis_title='Price',
-        hovermode='x unified',
-        annotations=[
-            dict(
-                x=data.index[-1],
-                y=current_price,
-                xref='x',
-                yref='y',
-                text=f'Current Price: {current_price:.2f}',
-                showarrow=True,
-                arrowhead=2,
-                ax=20,
-                ay=-30,
-                font=dict(color="green")
-            )
-        ]
+        hovermode='x unified'
     )
     
     # Update hover information
@@ -178,11 +161,15 @@ def main():
     with col1:
         st.subheader("Opening Price Prediction")
 
+        # Fetch current stock price
+        current_price = fetch_current_stock_price(ticker)
+        st.markdown(f"<h2 style='color: green;'>Current Stock Price: ₹{current_price:.2f}</h2>", unsafe_allow_html=True)
+
         # Perform prediction on page load
         opening_price_data = load_opening_price_data(ticker)
         
         # Plot the predictions
-        plot_actual_vs_predicted(company, f"{company}_opening_price_data_with_predictions.csv", ticker)
+        plot_actual_vs_predicted(company, f"{company}_opening_price_data_with_predictions.csv")
 
         year = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
 

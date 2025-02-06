@@ -478,8 +478,14 @@ def main():
             # Use a custom colormap with shades of brown
             cmap = sns.light_palette("brown", as_cmap=True)
 
-            sns.heatmap(heatmap_data, annot=padded_companies.reshape(num_rows, num_cols),
-                        fmt='', cmap=cmap, cbar_kws={'label': 'Weightage'}, linewidths=.5, ax=ax, annot_kws={"size": 8})
+            sns.heatmap(heatmap_data, annot=False, cmap=cmap, cbar_kws={'label': 'Weightage'}, linewidths=.5, ax=ax, annot_kws={"size": 8})
+
+            # Add annotations on hover
+            for y in range(heatmap_data.shape[0]):
+                for x in range(heatmap_data.shape[1]):
+                    if not np.isnan(heatmap_data[y, x]):
+                        ax.text(x + 0.5, y + 0.5, padded_companies.reshape(num_rows, num_cols)[y, x],
+                                ha='center', va='center', color='black', fontsize=8, alpha=0)
 
             ax.set_title('Company Weightage Heatmap')
 
@@ -520,4 +526,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

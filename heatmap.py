@@ -20,7 +20,7 @@ companies = {
     "Indian Oil Corp": "IOC.NS"
 }
 
-@st.cache
+@st.cache_data
 def fetch_stock_data(ticker):
     return yf.download(ticker, start="2022-01-01", end="2023-01-01")
 

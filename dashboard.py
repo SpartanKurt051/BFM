@@ -144,16 +144,21 @@ def make_predictions(model, X_test, scaler):
     predictions = scaler.inverse_transform(predictions)
     return predictions
 
+# Calculate error percentage
+def calculate_error_percentage(actual, predicted):
+    return np.mean(np.abs((actual - predicted) / actual)) * 100
+
 # Plot predictions
 def plot_predictions(dates, actual_prices, predictions, current_price, title):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=dates, y=actual_prices.flatten(), mode="lines", name="Actual Price"))
-    fig.add_trace(go.Scatter(x=dates, y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
+    fig.add_trace(go.Scatter(x=dates[:len(actual_prices)], y=actual_prices.flatten(), mode="lines", name="Actual Price"))
+    fig.add_trace(go.Scatter(x=dates[len(dates) - len(predictions):], y=predictions.flatten(), mode="lines", name="Predicted Price", line=dict(color="red")))
     fig.update_layout(
         title=title,
         xaxis_title="Date",
         yaxis_title="Price (₹)",
         template="plotly_dark",
+        xaxis=dict(range=["2020-01-01", "2025-01-26"], fixedrange=True),
         annotations=[
             dict(
                 x=0.5,
@@ -213,6 +218,12 @@ def main():
 
             # Plot the predictions
             plot_predictions(dates[:len(predictions)], actual_prices, predictions, current_price, f"Daily Opening Price Prediction for {year}")
+
+            # Calculate error percentage for January
+            january_actual = actual_prices[:31]
+            january_predictions = predictions[:31]
+            error_percentage = calculate_error_percentage(january_actual, january_predictions)
+            st.write(f"Error Percentage for January: {error_percentage:.2f}%")
 
             st.subheader("Opening Price Data")
             filtered_data = opening_price_data[opening_price_data['Year'] == year]

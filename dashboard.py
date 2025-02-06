@@ -206,11 +206,11 @@ def main():
         # Generate dates for the full range
         dates = pd.date_range(start="2020-01-01", end="2025-01-25", freq='D')
 
-        # Fetch current stock price
-        current_price = fetch_current_stock_price(ticker)
+        # Ensure predictions cover the entire date range
+        full_predictions = np.concatenate([actual_prices.flatten(), predictions.flatten()])
 
         # Plot the predictions
-        plot_predictions(dates[:len(predictions)], actual_prices, predictions, current_price, "Daily Opening Price Prediction")
+        plot_predictions(dates, full_predictions, full_predictions, current_price, "Daily Opening Price Prediction")
 
         st.subheader("Opening Price Data")
         st.dataframe(opening_price_data, height=200)

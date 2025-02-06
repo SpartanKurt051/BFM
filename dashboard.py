@@ -433,7 +433,7 @@ def main():
 
             st.subheader("Opening Price Data")
             filtered_data = opening_price_data[opening_price_data['Year'] == year]
-            st.dataframe(filtered_data, height=200)
+            st.dataframe(filtered_data, height=400)
 
         with col2:
             st.subheader(f"About {company}")
@@ -485,7 +485,8 @@ def main():
             fig.update_layout(
                 title='Company Weightage Heatmap',
                 xaxis=dict(showticklabels=False),
-                yaxis=dict(showticklabels=False)
+                yaxis=dict(showticklabels=False),
+                height=400  # Increase height to match the opening price data table
             )
 
             st.plotly_chart(fig)
@@ -513,8 +514,11 @@ def main():
                 ipo_date = eps_pe_ipo_kpi.get("IPO Date", ipo_dates.get(ticker, "N/A"))
                 kpi = eps_pe_ipo_kpi["KPI"]
             
-            kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']} | PE Ratio: {eps_pe_ipo_kpi['PE Ratio']} | IPO Date: {ipo_date} | KPI: {kpi} | Current Price: ₹{current_price:.2f}"
-            st.write(kpi_info)
+            st.write(f"EPS: {eps_pe_ipo_kpi['EPS']}")
+            st.write(f"PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}")
+            st.write(f"IPO Date: {ipo_date}")
+            st.write(f"KPI: {kpi}")
+            st.write(f"Current Price: ₹{current_price:.2f}")
 
         st.write("Data fetched successfully! Use this for further analysis and prediction.")
 

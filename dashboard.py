@@ -414,7 +414,7 @@ def main():
     page = st.sidebar.selectbox("Choose a page", ["Page 1", "Page 2"])
 
     if page == "Page 2":
-        col1, col2, col3 = st.columns([3, 3, 3])
+        col1, col2, col3 = st.columns([4, 3, 2])
 
         with col1:
             st.subheader("Opening Price Prediction")

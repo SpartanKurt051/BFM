@@ -31,7 +31,7 @@ def fetch_fundamental_data(ticker):
     for date in dates:
         try:
             total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index) else None
+            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance_s[...]
             net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
         except Exception:
             total_revenue, debt_to_equity, net_cashflow = None, None, None
@@ -168,76 +168,72 @@ def main():
     company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
     ticker = companies[company]
 
-    # Set IPO dates for specific companies
-    ipo_dates = {
-        "ADANIGREEN.NS": "April 7, 2020",
-        "JSWENERGY.NS": "December 7, 2009",
-        "NTPC.NS": "November 22, 2024",
-        "POWERGRID.NS": "September 10, 2007",
-        "NHPC.NS": "August 7, 2009"
-    }
+    # Page filter
+    st.sidebar.header("Select Page")
+    page = st.sidebar.selectbox("Choose a page", ["Page 1", "Page 2"])
 
-    col1, col2, col3 = st.columns([3, 1.5, 1.5])
+    if page == "Page 2":
+        col1, col2, col3 = st.columns([3, 1.5, 1.5])
 
-    with col1:
-        st.subheader("Opening Price Prediction")
+        with col1:
+            st.subheader("Opening Price Prediction")
 
-        # Fetch current stock price
-        current_price = fetch_current_stock_price(ticker)
-        st.markdown(f"<h4 style='color: green;'>Current Stock Price: ₹{current_price:.2f}</h4>", unsafe_allow_html=True)
+            # Fetch current stock price
+            current_price = fetch_current_stock_price(ticker)
+            st.markdown(f"<h4 style='color: green;'>Current Stock Price: ₹{current_price:.2f}</h4>", unsafe_allow_html=True)
 
-        # Perform prediction on page load
-        opening_price_data = load_opening_price_data(ticker)
+            # Perform prediction on page load
+            opening_price_data = load_opening_price_data(ticker)
+            
+            # Plot the predictions
+            plot_actual_vs_predicted(company, f"{company}_opening_price_data_with_predictions.csv")
+
+            year = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
+
+            st.subheader("Opening Price Data")
+            filtered_data = opening_price_data[opening_price_data['Year'] == year]
+            st.dataframe(filtered_data, height=200)
+
+        with col2:
+            st.subheader(f"About {company}")
+            company_info = fetch_company_info(ticker)
+            st.text_area("Company Information", company_info, height=150)
+
+            st.subheader(f"{company} Performance")
+            df_stock = fetch_stock_data(ticker)
+            year_data = df_stock[df_stock.index.year == year]
+            volume_range = st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
+            
+            # Display the selected volume range
+            st.write(f"Selected Volume Range: {volume_range}")
+
+        with col3:
+            st.subheader("Live News")
+            news_api_key = "31739ed855eb4759908a898ab99a43e7"
+            query = company
+            news_articles = fetch_live_news(news_api_key, query)
+            news_text = ""
+            for article in news_articles:
+                news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
+            st.text_area("Live News", news_text, height=150)
         
-        # Plot the predictions
-        plot_actual_vs_predicted(company, f"{company}_opening_price_data_with_predictions.csv")
+            st.subheader(f"{company} EPS, PE, IPO KPI")
+            eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
+            
+            # Fetch alternative data if main source fails
+            if eps_pe_ipo_kpi["IPO Date"] is None or eps_pe_ipo_kpi["KPI"] is None:
+                alpha_vantage_api_key = "YOUR_ALPHA_VANTAGE_API_KEY"
+                alternative_data = fetch_alternative_kpi_ipo(ticker, alpha_vantage_api_key)
+                ipo_date = alternative_data["IPO Date"]
+                kpi = alternative_data["KPI"]
+            else:
+                ipo_date = eps_pe_ipo_kpi.get("IPO Date", ipo_dates.get(ticker, "N/A"))
+                kpi = eps_pe_ipo_kpi["KPI"]
+            
+            kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']} | PE Ratio: {eps_pe_ipo_kpi['PE Ratio']} | IPO Date: {ipo_date} | KPI: {kpi} | Current Price: ₹{current_price:.2f}"
+            st.write(kpi_info)
 
-        year = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
-
-        st.subheader("Opening Price Data")
-        filtered_data = opening_price_data[opening_price_data['Year'] == year]
-        st.dataframe(filtered_data, height=200)
-
-    with col2:
-        st.subheader(f"About {company}")
-        company_info = fetch_company_info(ticker)
-        st.text_area("Company Information", company_info, height=150)
-
-        st.subheader(f"{company} Performance")
-        df_stock = fetch_stock_data(ticker)
-        year_data = df_stock[df_stock.index.year == year]
-        volume_range = st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
-        
-        # Display the selected volume range
-        st.write(f"Selected Volume Range: {volume_range}")
-
-    with col3:
-        st.subheader("Live News")
-        news_api_key = "31739ed855eb4759908a898ab99a43e7"
-        query = company
-        news_articles = fetch_live_news(news_api_key, query)
-        news_text = ""
-        for article in news_articles:
-            news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
-        st.text_area("Live News", news_text, height=150)
-    
-        st.subheader(f"{company} EPS, PE, IPO KPI")
-        eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-        
-        # Fetch alternative data if main source fails
-        if eps_pe_ipo_kpi["IPO Date"] is None or eps_pe_ipo_kpi["KPI"] is None:
-            alpha_vantage_api_key = "YOUR_ALPHA_VANTAGE_API_KEY"
-            alternative_data = fetch_alternative_kpi_ipo(ticker, alpha_vantage_api_key)
-            ipo_date = alternative_data["IPO Date"]
-            kpi = alternative_data["KPI"]
-        else:
-            ipo_date = eps_pe_ipo_kpi.get("IPO Date", ipo_dates.get(ticker, "N/A"))
-            kpi = eps_pe_ipo_kpi["KPI"]
-        
-        kpi_info = f"EPS: {eps_pe_ipo_kpi['EPS']} | PE Ratio: {eps_pe_ipo_kpi['PE Ratio']} | IPO Date: {ipo_date} | KPI: {kpi} | Current Price: ₹{current_price:.2f}"
-        st.write(kpi_info)
-
-    st.write("Data fetched successfully! Use this for further analysis and prediction.")
+        st.write("Data fetched successfully! Use this for further analysis and prediction.")
 
 if __name__ == "__main__":
     main()

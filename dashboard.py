@@ -49,8 +49,8 @@ def plot_actual_vs_predicted(company_name, file_name):
     
     # Update hover information
     fig.update_traces(
-        hovertemplate='<b>Date</b>: %{x|%d/%m/%Y}<br><b>Actual Price</b>: %{y}<br><b>Predicted Price</b>: %{customdata[0]}<extra></extra>',
-        customdata=[data['Predicted Price']]
+        hovertemplate='<b>Date</b>: %{x|%d/%m/%Y}<br><b>Actual Price</b>: %{y}<br><b>Predicted Price</b>: %{customdata}<extra></extra>',
+        customdata=data['Predicted Price']
     )
     
     # Use Streamlit to display the plot and error percentage

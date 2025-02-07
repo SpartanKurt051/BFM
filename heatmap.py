@@ -186,7 +186,6 @@ def plot_buying_decision(company_name, data):
         xaxis_title='Date',
         yaxis_title='Opening Price',
         hovermode='x unified',
-        color='black'
     )
 
     # Use Streamlit to display the plot

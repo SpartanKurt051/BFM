@@ -101,6 +101,17 @@ def fetch_current_stock_price(ticker):
     stock = yf.Ticker(ticker)
     return stock.history(period="1d")["Close"].iloc[-1]
 
+@st.cache_data
+def fetch_alternative_kpi_ipo(ticker, api_key):
+    url = f'https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey={api_key}'
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+    data = response.json()
+    return {
+        "IPO Date": data.get("IPODate", "N/A"),
+        "KPI": data.get("ProfitMargin", "N/A")  # Assuming KPI is represented by Profit Margin
+    }
+
 # Plot actual vs predicted prices
 def plot_actual_vs_predicted(company_name, file_name):
     # Load the data
@@ -146,18 +157,6 @@ def plot_actual_vs_predicted(company_name, file_name):
     # Use Streamlit to display the plot and error percentage
     st.plotly_chart(fig)
     st.write(error_text)
-
-# Fetch alternative KPI and IPO data from Alpha Vantage
-@st.cache_data
-def fetch_alternative_kpi_ipo(ticker, api_key):
-    url = f'https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey={api_key}'
-    response = requests.get(url)
-    response.raise_for_status()  # Raise an exception for HTTP errors
-    data = response.json()
-    return {
-        "IPO Date": data.get("IPODate", "N/A"),
-        "KPI": data.get("ProfitMargin", "N/A")  # Assuming KPI is represented by Profit Margin
-    }
 
 # Main function
 def main():

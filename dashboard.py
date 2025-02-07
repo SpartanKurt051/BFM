@@ -272,7 +272,7 @@ def main():
             eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
             
             # Fetch alternative data if main source fails
-            if eps_pe_ipo_kpi["IPO Date"] is None or eps_pe_ipo_kpi["KPI"] is None:
+            if eps_pe_ipo_kpi["IPO Date"] == "N/A" or eps_pe_ipo_kpi["KPI"] is None:
                 alpha_vantage_api_key = "YOUR_ALPHA_VANTAGE_API_KEY"
                 alternative_data = fetch_alternative_kpi_ipo(ticker, alpha_vantage_api_key)
                 ipo_date = alternative_data["IPO Date"]

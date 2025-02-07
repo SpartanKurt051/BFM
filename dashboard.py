@@ -10,7 +10,7 @@ st.set_page_config(layout="wide")
 def load_css(file_name):
     with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
+        
 # Load CSS
 load_css("styles.css")
 
@@ -192,10 +192,10 @@ def main():
     # Page filter
     st.sidebar.header("Select Page")
     page = st.sidebar.selectbox("Choose a page", ["Page 1", "Page 2"])
-
+    
     if page == "Page 2":
         col1, col2, col3 = st.columns([4, 3, 2])
-
+    
         with col1:
             st.subheader("Opening Price Prediction")
 
@@ -270,8 +270,7 @@ def main():
             )
 
             st.plotly_chart(fig)
-    
-    
+                    
         with col3:
             st.subheader("Live News")
             news_api_key = "31739ed855eb4759908a898ab99a43e7"
@@ -301,6 +300,7 @@ def main():
             st.write(f"KPI: {kpi}")
             st.write(f"Current Price: ₹{current_price:.2f}")
       '''
+              
         with col3:
             st.subheader("Live News")
             news_api_key = "31739ed855eb4759908a898ab99a43e7"
@@ -330,6 +330,6 @@ def main():
             st.write(f"KPI: {kpi}")
             st.write(f"Current Price: ₹{current_price:.2f}")
          '''      
-
+        
 if __name__ == "__main__":
     main()

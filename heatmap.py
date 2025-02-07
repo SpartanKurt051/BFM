@@ -273,7 +273,7 @@ def main():
                 colorscale='YlOrBr',
                 showscale=True,
                 colorbar=dict(title='Weightage')
-            ))
+            )
 
             fig.update_layout(
                 title='Company Weightage Heatmap',

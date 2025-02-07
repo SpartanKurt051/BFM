@@ -291,8 +291,8 @@ def main():
             news_articles = fetch_live_news(news_api_key, query)
             news_text = ""
             for article in news_articles:
-                news_text += f"<span style='color: purple; font-weight: bold;'>{article['title']}</span>: <span style='color: goldenrod;'>{article['description']}</span><br><br>"
-            st.markdown(f"<div style='height: 150px; overflow-y: scroll;'>{news_text}</div>", unsafe_allow_html=True)
+                news_text += f"{article['title']}: {article['description']}\n\n"
+            st.text_area("Live News", news_text, height=150)
 
             st.subheader(f"{company} EPS, PE, IPO Price, High, Low, Open, Close, and KPI")
             

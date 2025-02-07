@@ -232,11 +232,7 @@ def main():
             st.subheader(f"{company} Performance")
             df_stock = fetch_stock_data(ticker)
             year_data = df_stock[df_stock.index.year == year]
-            volume_range = st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
             
-            # Display the selected volume range
-            st.write(f"Selected Volume Range: {volume_range}")
-
             st.subheader("Company Weightage Heatmap")
 
             # Load heatmap data
@@ -272,7 +268,7 @@ def main():
             ))
 
             fig.update_layout(
-                #title='Company Weightage Heatmap',
+                title='Company Weightage Heatmap',
                 xaxis=dict(showticklabels=False),
                 yaxis=dict(showticklabels=False),
                 height=535  # Increase height of the heatmap

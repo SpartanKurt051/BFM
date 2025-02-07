@@ -228,8 +228,9 @@ def main():
             st.subheader(f"About {company}")
             company_info = fetch_company_info(ticker)
             st.text_area("Company Information", company_info, height=150)
-
-           ''' st.subheader(f"{company} Performance")
+            
+            '''
+            st.subheader(f"{company} Performance")
             df_stock = fetch_stock_data(ticker)
             year_data = df_stock[df_stock.index.year == year]
             volume_range = st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)

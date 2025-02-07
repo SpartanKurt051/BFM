@@ -286,5 +286,5 @@ def main():
             st.write(f"KPI: {kpi}")
             #st.write(f"Current Price: ₹{current_price:.2f}")
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()

@@ -232,7 +232,7 @@ def main():
             df_stock = fetch_stock_data(ticker)
             year_data = df_stock[df_stock.index.year == year]
             
-            #st.subheader("Company Weightage Heatmap")
+            st.subheader("Company Weightage Heatmap")
 
             # Load heatmap data
             data_url = "https://raw.githubusercontent.com/SpartanKurt051/BFM/main/Heatmap.csv"

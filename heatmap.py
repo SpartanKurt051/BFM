@@ -273,12 +273,12 @@ def main():
                 colorscale='YlOrBr',
                 showscale=True,
                 colorbar=dict(title='Weightage')
-            )
+            ))
 
             fig.update_layout(
                 title='Company Weightage Heatmap',
                 xaxis=dict(showticklabels=False),
-                yaxis=dict(showticklabels(False),
+                yaxis=dict(showticklabels=False),
                 height=535  # Increase height of the heatmap
             )
 

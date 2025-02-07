@@ -79,7 +79,7 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "Low": info.get("dayLow"),
         "Open": info.get("open"),
         "Previous Close": info.get("previousClose"),
-        "IPO Price": "N/A"  # IPO price can be manually added if known
+        #"IPO Price": "N/A"  # IPO price can be manually added if known
     }
     return data
 
@@ -185,7 +185,8 @@ def plot_buying_decision(company_name, data):
         title=f'{company_name} - Buying Decision',
         xaxis_title='Date',
         yaxis_title='Opening Price',
-        hovermode='x unified'
+        hovermode='x unified',
+        color='black'
     )
 
     # Use Streamlit to display the plot

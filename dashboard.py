@@ -270,8 +270,9 @@ def main():
             )
 
             st.plotly_chart(fig)
-
-       ''' with col3:
+    
+    '''
+        with col3:
             st.subheader("Live News")
             news_api_key = "31739ed855eb4759908a898ab99a43e7"
             query = company

@@ -277,16 +277,16 @@ def main():
             # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
             eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
         
-            # Display key financial metrics with highlighted labels and values
-            st.markdown(f"**<span style='color:purple;'>EPS:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['EPS']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:purple;'>PE Ratio:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['PE Ratio']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:purple;'>IPO Date:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['IPO Date']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:purple;'>IPO Price:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['IPO Price']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:purple;'>High:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['High']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:purple;'>Low:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['Low']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:purple;'>Open:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['Open']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:purple;'>Close:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['Previous Close']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:purple;'>KPI:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['KPI']}</span>", unsafe_allow_html=True)
+            # Display key financial metrics
+            st.write(f"**EPS:** {eps_pe_ipo_kpi['EPS']}")
+            st.write(f"**PE Ratio:** {eps_pe_ipo_kpi['PE Ratio']}")
+            st.write(f"**IPO Date:** {eps_pe_ipo_kpi['IPO Date']}")
+            st.write(f"**IPO Price:** {eps_pe_ipo_kpi['IPO Price']}")
+            st.write(f"**High:** {eps_pe_ipo_kpi['High']}")
+            st.write(f"**Low:** {eps_pe_ipo_kpi['Low']}")
+            st.write(f"**Open:** {eps_pe_ipo_kpi['Open']}")
+            st.write(f"**Close:** {eps_pe_ipo_kpi['Previous Close']}")
+            st.write(f"**KPI:** {eps_pe_ipo_kpi['KPI']}")
 
 if __name__ == "__main__":
     main()

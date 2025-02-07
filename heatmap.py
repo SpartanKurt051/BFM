@@ -172,7 +172,7 @@ def plot_buying_decision(company_name, data):
 
     # Update layout with titles and labels
     fig.update_layout(
-        title=f'{company_name} - Buying Decision',
+        #title=f'{company_name} - Buying Decision',
         xaxis_title='Date',
         yaxis_title='Opening Price',
         hovermode='x unified'
@@ -237,7 +237,7 @@ def main():
             # Display the selected volume range
             st.write(f"Selected Volume Range: {volume_range}")
 
-            st.subheader("Company Weightage Heatmap")
+            #st.subheader("Company Weightage Heatmap")
 
             # Load heatmap data
             data_url = "https://raw.githubusercontent.com/SpartanKurt051/BFM/main/Heatmap.csv"

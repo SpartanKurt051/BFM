@@ -72,7 +72,7 @@ def fetch_eps_pe_ipo_kpi(ticker):
     data = {
         "EPS": info.get("trailingEps"),
         "PE Ratio": info.get("trailingPE"),
-        "IPO Date": ipo_dates.get(ticker, info.get("ipoDate")),
+        "IPO Date": ipo_dates.get(ticker, "N/A"),
         "KPI": info.get("kpi"),
         "Current Price": info.get("regularMarketPrice")
     }
@@ -285,7 +285,7 @@ def main():
             st.write(f"PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}")
             st.write(f"IPO Date: {ipo_date}")
             st.write(f"KPI: {kpi}")
-            st.write(f"Current Price: ₹{current_price:.2f}")   
+            st.write(f"Current Price: ₹{current_price:.2f}")
 
 if __name__ == "__main__":
     main()

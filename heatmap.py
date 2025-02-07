@@ -184,7 +184,23 @@ def plot_buying_decision(company_name, data):
 # Main function
 def main():
     st.title("📈 Stock Market Dashboard")
-
+    
+    # Display key financial metrics in horizontal format next to the title
+    metrics_html = (
+        f"<div style='float: right;'>"
+        f"<span style='color: purple; font-weight: bold;'>EPS:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['EPS']}</span> &nbsp;&nbsp;"
+        f"<span style='color: purple; font-weight: bold;'>PE Ratio:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['PE Ratio']}</span> &nbsp;&nbsp;"
+        f"<span style='color: purple; font-weight: bold;'>IPO Date:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['IPO Date']}</span> &nbsp;&nbsp;"
+        f"<span style='color: purple; font-weight: bold;'>IPO Price:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['IPO Price']}</span> &nbsp;&nbsp;"
+        f"<span style='color: purple; font-weight: bold;'>High:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['High']}</span> &nbsp;&nbsp;"
+        f"<span style='color: purple; font-weight: bold;'>Low:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Low']}</span> &nbsp;&nbsp;"
+        f"<span style='color: purple; font-weight: bold;'>Open:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Open']}</span> &nbsp;&nbsp;"
+        f"<span style='color: purple; font-weight: bold;'>Close:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Previous Close']}</span> &nbsp;&nbsp;"
+        f"<span style='color: purple; font-weight: bold;'>KPI:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['KPI']}</span>"
+        f"</div>"
+    )
+    st.markdown(metrics_html, unsafe_allow_html=True)
+    
     # Sidebar
     st.sidebar.header("Select Company")
     companies = {
@@ -229,6 +245,7 @@ def main():
             company_info = fetch_company_info(ticker)
             st.text_area("Company Information", company_info, height=150)
 
+            st.subheader(f"{company} Performance")
             df_stock = fetch_stock_data(ticker)
             year_data = df_stock[df_stock.index.year == year]
             
@@ -287,27 +304,6 @@ def main():
 
             st.subheader("Buying Decision")
             plot_buying_decision(company, filtered_data)
-
-            st.subheader(f"{company} EPS, PE, IPO Price, High, Low, Open, Close, and KPI")
-            
-            # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
-            eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-        
-            # Display key financial metrics in horizontal format
-            st.markdown(
-                f"<div style='display: flex; flex-wrap: wrap;'>"
-                f"<div style='margin-right: 10px;'><span style='color: purple; font-weight: bold;'>EPS:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['EPS']}</span></div>"
-                f"<div style='margin-right: 10px;'><span style='color: purple; font-weight: bold;'>PE Ratio:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['PE Ratio']}</span></div>"
-                f"<div style='margin-right: 10px;'><span style='color: purple; font-weight: bold;'>IPO Date:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['IPO Date']}</span></div>"
-                f"<div style='margin-right: 10px;'><span style='color: purple; font-weight: bold;'>IPO Price:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['IPO Price']}</span></div>"
-                f"<div style='margin-right: 10px;'><span style='color: purple; font-weight: bold;'>High:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['High']}</span></div>"
-                f"<div style='margin-right: 10px;'><span style='color: purple; font-weight: bold;'>Low:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Low']}</span></div>"
-                f"<div style='margin-right: 10px;'><span style='color: purple; font-weight: bold;'>Open:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Open']}</span></div>"
-                f"<div style='margin-right: 10px;'><span style='color: purple; font-weight: bold;'>Close:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Previous Close']}</span></div>"
-                f"<div style='margin-right: 10px;'><span style='color: purple; font-weight: bold;'>KPI:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['KPI']}</span></div>"
-                f"</div>",
-                unsafe_allow_html=True
-            )
 
 if __name__ == "__main__":
     main()

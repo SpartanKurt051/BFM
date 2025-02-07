@@ -284,7 +284,7 @@ def main():
             st.write(f"PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}")
             st.write(f"IPO Date: {ipo_date}")
             st.write(f"KPI: {kpi}")
-            st.write(f"Current Price: ₹{current_price:.2f}")
+            #st.write(f"Current Price: ₹{current_price:.2f}")
 
 if __name__ == "__main__":
     main()

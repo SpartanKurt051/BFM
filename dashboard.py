@@ -32,7 +32,7 @@ def fetch_fundamental_data(ticker):
     for date in dates:
         try:
             total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index) else None
+            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance[...]
             net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
         except Exception:
             total_revenue, debt_to_equity, net_cashflow = None, None, None
@@ -267,23 +267,11 @@ def main():
                 news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
             st.text_area("Live News", news_text, height=150)
         
-            st.subheader(f"{company} EPS, PE, IPO KPI")
+            st.subheader(f"{company} EPS, PE")
             eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-            
-            # Fetch alternative data if main source fails
-            if eps_pe_ipo_kpi["IPO Date"] == "N/A" or eps_pe_ipo_kpi["KPI"] is None:
-                alpha_vantage_api_key = "YOUR_ALPHA_VANTAGE_API_KEY"
-                alternative_data = fetch_alternative_kpi_ipo(ticker, alpha_vantage_api_key)
-                ipo_date = alternative_data["IPO Date"]
-                kpi = alternative_data["KPI"]
-            else:
-                ipo_date = eps_pe_ipo_kpi.get("IPO Date", "N/A")
-                kpi = eps_pe_ipo_kpi["KPI"]
             
             st.write(f"EPS: {eps_pe_ipo_kpi['EPS']}")
             st.write(f"PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}")
-            st.write(f"IPO Date: {ipo_date}")
-            st.write(f"KPI: {kpi}")
             #st.write(f"Current Price: ₹{current_price:.2f}")
 
 if __name__ == "__main__":

@@ -185,6 +185,22 @@ def plot_buying_decision(company_name, data):
 def main():
     st.title("📈 Stock Market Dashboard")
     
+    # Sidebar
+    st.sidebar.header("Select Company")
+    companies = {
+        "Adani Green Energy": "ADANIGREEN.NS",
+        "Tata Power": "TATAPOWER.NS",
+        "Jsw Energy": "JSWENERGY.NS",
+        "NTPC": "NTPC.NS",
+        "Power Grid Corp": "POWERGRID.NS",
+        "NHPC": "NHPC.NS"
+    }
+    company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
+    ticker = companies[company]
+
+    # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
+    eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
+    
     # Display key financial metrics in horizontal format next to the title
     metrics_html = (
         f"<div style='float: right;'>"
@@ -201,19 +217,6 @@ def main():
     )
     st.markdown(metrics_html, unsafe_allow_html=True)
     
-    # Sidebar
-    st.sidebar.header("Select Company")
-    companies = {
-        "Adani Green Energy": "ADANIGREEN.NS",
-        "Tata Power": "TATAPOWER.NS",
-        "Jsw Energy": "JSWENERGY.NS",
-        "NTPC": "NTPC.NS",
-        "Power Grid Corp": "POWERGRID.NS",
-        "NHPC": "NHPC.NS"
-    }
-    company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
-    ticker = companies[company]
-
     # Page filter
     st.sidebar.header("Select Page")
     page = st.sidebar.selectbox("Choose a page", ["Page 1", "Page 2"])

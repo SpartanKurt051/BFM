@@ -167,8 +167,13 @@ def plot_actual_vs_predicted(company_name, file_name):
 def plot_buying_decision(company_name, data):
     fig = go.Figure()
 
+    # Ensure 'Opening Price' column exists
+    if 'Opening Price' not in data.columns:
+        st.error("Opening Price column is missing in the data.")
+        return
+
     # Compare each day's opening price with the previous day's price
-    colors = ['red' if data['Opening Price'][i] < data['Opening Price'][i - 1] else 'green' for i in range(1, len(data))]
+    colors = ['red' if data['Opening Price'].iloc[i] < data['Opening Price'].iloc[i - 1] else 'green' for i in range(1, len(data))]
     colors.insert(0, 'red')  # Initial day color
 
     # Add trace for opening prices with color based on comparison

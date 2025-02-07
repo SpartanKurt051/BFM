@@ -277,16 +277,16 @@ def main():
             # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
             eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
         
-            # Display key financial metrics
-            st.write(f"**EPS:** {eps_pe_ipo_kpi['EPS']}")
-            st.write(f"**PE Ratio:** {eps_pe_ipo_kpi['PE Ratio']}")
-            st.write(f"**IPO Date:** {eps_pe_ipo_kpi['IPO Date']}")
-            st.write(f"**IPO Price:** {eps_pe_ipo_kpi['IPO Price']}")
-            st.write(f"**High:** {eps_pe_ipo_kpi['High']}")
-            st.write(f"**Low:** {eps_pe_ipo_kpi['Low']}")
-            st.write(f"**Open:** {eps_pe_ipo_kpi['Open']}")
-            st.write(f"**Close:** {eps_pe_ipo_kpi['Previous Close']}")
-            st.write(f"**KPI:** {eps_pe_ipo_kpi['KPI']}")
+            # Display key financial metrics with highlighted labels and values
+            st.markdown(f"**<span style='color:blue;'>EPS:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['EPS']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:blue;'>PE Ratio:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['PE Ratio']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:blue;'>IPO Date:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['IPO Date']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:blue;'>IPO Price:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['IPO Price']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:blue;'>High:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['High']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:blue;'>Low:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['Low']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:blue;'>Open:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['Open']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:blue;'>Close:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['Previous Close']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:blue;'>KPI:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['KPI']}</span>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

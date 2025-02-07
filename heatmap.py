@@ -271,7 +271,7 @@ def main():
                 xaxis=dict(showticklabels=False),
                 yaxis=dict(showticklabels=False),
                 height=535,
-                width=500# Increase height of the heatmap
+                width=700# Increase height of the heatmap
             )
 
             st.plotly_chart(fig)

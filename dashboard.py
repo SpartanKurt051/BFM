@@ -58,7 +58,7 @@ def fetch_live_news(api_key, query):
     news_data = response.json()
     return news_data['articles'] if 'articles' in news_data else []
 
-@st.cache_data
+'''@st.cache_data
 def fetch_eps_pe_ipo_kpi(ticker):
     stock = yf.Ticker(ticker)
     info = stock.info
@@ -70,7 +70,26 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "Current Price": info.get("regularMarketPrice")
     }
     return data
-
+'''
+@st.cache_data
+def fetch_eps_pe_ipo_kpi(ticker):
+    stock = yf.Ticker(ticker)
+    info = stock.info
+    ipo_dates = {
+        "ADANIGREEN.NS": "June 2018",
+        "JSWENERGY.NS": "January 2010",
+        "NTPC.NS": "October 2004",
+        "NHPC.NS": "August 2009",
+        "POWERGRID.NS": "October 2007"
+    }
+    data = {
+        "EPS": info.get("trailingEps"),
+        "PE Ratio": info.get("trailingPE"),
+        "IPO Date": ipo_dates.get(ticker, info.get("ipoDate")),
+        "KPI": info.get("kpi"),
+        "Current Price": info.get("regularMarketPrice")
+    }
+    return data
 @st.cache_data
 def fetch_company_info(ticker):
     stock = yf.Ticker(ticker)

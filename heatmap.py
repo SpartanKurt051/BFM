@@ -204,15 +204,15 @@ def main():
     # Display key financial metrics in horizontal format next to the title
     metrics_html = (
         f"<div style='float: right;'>"
-        f"<span style='color: purple; font-weight: bold;'>EPS:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['EPS']}</span> &nbsp;&nbsp;"
-        f"<span style='color: purple; font-weight: bold;'>PE Ratio:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['PE Ratio']}</span> &nbsp;&nbsp;"
-        f"<span style='color: purple; font-weight: bold;'>IPO Date:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['IPO Date']}</span> &nbsp;&nbsp;"
-        f"<span style='color: purple; font-weight: bold;'>IPO Price:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['IPO Price']}</span> &nbsp;&nbsp;"
-        f"<span style='color: purple; font-weight: bold;'>High:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['High']}</span> &nbsp;&nbsp;"
-        f"<span style='color: purple; font-weight: bold;'>Low:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Low']}</span> &nbsp;&nbsp;"
-        f"<span style='color: purple; font-weight: bold;'>Open:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Open']}</span> &nbsp;&nbsp;"
-        f"<span style='color: purple; font-weight: bold;'>Close:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Previous Close']}</span> &nbsp;&nbsp;"
-        f"<span style='color: purple; font-weight: bold;'>KPI:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['KPI']}</span>"
+        f"<span style='color: green; font-weight: bold;'>EPS:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['EPS']}</span> &nbsp;&nbsp;"
+        f"<span style='color: green; font-weight: bold;'>PE Ratio:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['PE Ratio']}</span> &nbsp;&nbsp;"
+        f"<span style='color: green; font-weight: bold;'>IPO Date:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['IPO Date']}</span> &nbsp;&nbsp;"
+        f"<span style='color: green; font-weight: bold;'>IPO Price:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['IPO Price']}</span> &nbsp;&nbsp;"
+        f"<span style='color: green; font-weight: bold;'>High:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['High']}</span> &nbsp;&nbsp;"
+        f"<span style='color: green; font-weight: bold;'>Low:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Low']}</span> &nbsp;&nbsp;"
+        f"<span style='color: green; font-weight: bold;'>Open:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Open']}</span> &nbsp;&nbsp;"
+        f"<span style='color: green; font-weight: bold;'>Close:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['Previous Close']}</span> &nbsp;&nbsp;"
+        f"<span style='color: green; font-weight: bold;'>KPI:</span> <span style='color: goldenrod;'>{eps_pe_ipo_kpi['KPI']}</span>"
         f"</div>"
     )
     st.markdown(metrics_html, unsafe_allow_html=True)

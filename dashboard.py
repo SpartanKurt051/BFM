@@ -10,7 +10,7 @@ st.set_page_config(layout="wide")
 def load_css(file_name):
     with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-        
+
 # Load CSS
 load_css("styles.css")
 
@@ -58,19 +58,6 @@ def fetch_live_news(api_key, query):
     news_data = response.json()
     return news_data['articles'] if 'articles' in news_data else []
 
-'''@st.cache_data
-def fetch_eps_pe_ipo_kpi(ticker):
-    stock = yf.Ticker(ticker)
-    info = stock.info
-    data = {
-        "EPS": info.get("trailingEps"),
-        "PE Ratio": info.get("trailingPE"),
-        "IPO Date": info.get("ipoDate"),
-        "KPI": info.get("kpi"),
-        "Current Price": info.get("regularMarketPrice")
-    }
-    return data
-'''
 @st.cache_data
 def fetch_eps_pe_ipo_kpi(ticker):
     stock = yf.Ticker(ticker)
@@ -90,7 +77,7 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "Current Price": info.get("regularMarketPrice")
     }
     return data
-    
+
 @st.cache_data
 def fetch_company_info(ticker):
     stock = yf.Ticker(ticker)

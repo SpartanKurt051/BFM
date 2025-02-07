@@ -278,15 +278,15 @@ def main():
             eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
         
             # Display key financial metrics with highlighted labels and values
-            st.markdown(f"**<span style='color:blue;'>EPS:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['EPS']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:blue;'>PE Ratio:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['PE Ratio']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:blue;'>IPO Date:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['IPO Date']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:blue;'>IPO Price:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['IPO Price']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:blue;'>High:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['High']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:blue;'>Low:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['Low']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:blue;'>Open:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['Open']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:blue;'>Close:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['Previous Close']}</span>", unsafe_allow_html=True)
-            st.markdown(f"**<span style='color:blue;'>KPI:</span>** <span style='color:red;'>{eps_pe_ipo_kpi['KPI']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:purple;'>EPS:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['EPS']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:purple;'>PE Ratio:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['PE Ratio']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:purple;'>IPO Date:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['IPO Date']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:purple;'>IPO Price:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['IPO Price']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:purple;'>High:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['High']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:purple;'>Low:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['Low']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:purple;'>Open:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['Open']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:purple;'>Close:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['Previous Close']}</span>", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:purple;'>KPI:</span>** <span style='color:orange;'>{eps_pe_ipo_kpi['KPI']}</span>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

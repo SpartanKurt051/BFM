@@ -168,11 +168,11 @@ def plot_buying_decision(company_name, data):
     fig = go.Figure()
 
     # Add trace for opening prices
-    fig.add_trace(go.Scatter(x=data['Date'], y=data['Opening Price'], mode='lines', name='Opening Price', line=dict(color='blue')))
+    fig.add_trace(go.Scatter(x=data['Date'], y=data['Opening Price'], mode='lines', name='Opening Price', line=dict(color='red')))
 
     # Update layout with titles and labels
     fig.update_layout(
-        #title=f'{company_name} - Buying Decision',
+        title=f'{company_name} - Buying Decision',
         xaxis_title='Date',
         yaxis_title='Opening Price',
         hovermode='x unified'

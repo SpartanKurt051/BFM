@@ -163,39 +163,6 @@ def plot_actual_vs_predicted(company_name, file_name):
     st.plotly_chart(fig)
     st.write(error_text)
 
-def plot_buy_sell_decision(company_name, file_name):
-    # Load the data
-    data = pd.read_csv(file_name)
-    
-    # Set the date as the index for plotting
-    data['Date'] = pd.to_datetime(data['Date']).dt.tz_localize(None)
-    data.set_index('Date', inplace=True)
-    
-    # Determine the color for each day
-    colors = ['green']
-    for i in range(1, len(data)):
-        if data['Opening Price'].iloc[i] < data['Opening Price'].iloc[i-1]:
-            colors.append('red')
-        else:
-            colors.append('green')
-    
-    # Create the figure
-    fig = go.Figure()
-    
-    # Add traces with color-coded markers
-    fig.add_trace(go.Scatter(x=data.index, y=data['Opening Price'], mode='lines+markers', marker=dict(color=colors), name='Opening Price'))
-    
-    # Update layout with titles and labels
-    fig.update_layout(
-        title=f'{company_name} - Buy/Sell Decision',
-        xaxis_title='Date',
-        yaxis_title='Opening Price',
-        hovermode='x unified'
-    )
-    
-    # Use Streamlit to display the plot
-    st.plotly_chart(fig)
-
 # Main function
 def main():
     st.title("📈 Stock Market Dashboard")
@@ -238,10 +205,6 @@ def main():
             st.subheader("Opening Price Data")
             filtered_data = opening_price_data[opening_price_data['Year'] == year]
             st.dataframe(filtered_data, height=200)  # Decrease height of the opening price data chart
-
-            # Plot buy/sell decision
-            st.subheader("Buy/Sell Decision")
-            plot_buy_sell_decision(company, f"{company}_opening_price_data.csv")
 
         with col2:
             st.subheader(f"About {company}")

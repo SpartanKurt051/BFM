@@ -271,7 +271,7 @@ def main():
 
             st.plotly_chart(fig)
     
-    '''
+    
         with col3:
             st.subheader("Live News")
             news_api_key = "31739ed855eb4759908a898ab99a43e7"
@@ -329,7 +329,7 @@ def main():
             st.write(f"IPO Date: {ipo_date}")
             st.write(f"KPI: {kpi}")
             st.write(f"Current Price: ₹{current_price:.2f}")
-               
+         '''      
 
 if __name__ == "__main__":
     main()

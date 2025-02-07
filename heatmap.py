@@ -303,7 +303,7 @@ def main():
                 hoverinfo='text',
                 colorscale='YlOrBr',
                 showscale=True,
-                colorbar=dict(title='Weightage')
+                colorbar=dict(title='Weightage(in %)')
             ))
 
             fig.update_layout(

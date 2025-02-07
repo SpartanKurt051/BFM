@@ -74,7 +74,12 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "PE Ratio": info.get("trailingPE"),
         "IPO Date": ipo_dates.get(ticker, "N/A"),
         "KPI": info.get("kpi"),
-        "Current Price": info.get("regularMarketPrice")
+        "Current Price": info.get("regularMarketPrice"),
+        "High": info.get("dayHigh"),
+        "Low": info.get("dayLow"),
+        "Open": info.get("open"),
+        "Previous Close": info.get("previousClose"),
+        "IPO Price": "N/A"  # IPO price can be manually added if known
     }
     return data
 
@@ -256,7 +261,7 @@ def main():
             )
 
             st.plotly_chart(fig)
-
+'''
         with col3:
             st.subheader("Live News")
             news_api_key = "31739ed855eb4759908a898ab99a43e7"
@@ -267,24 +272,44 @@ def main():
                 news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
             st.text_area("Live News", news_text, height=150)
         
-            st.subheader(f"{company} EPS, PE, IPO KPI")
+            st.subheader(f"{company} EPS, PE, IPO Price, High, Low, Open, Close, and KPI")
             eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-            
-            # Fetch alternative data if main source fails
-            if eps_pe_ipo_kpi["IPO Date"] == "N/A" or eps_pe_ipo_kpi["KPI"] is None:
-                alpha_vantage_api_key = "YOUR_ALPHA_VANTAGE_API_KEY"
-                alternative_data = fetch_alternative_kpi_ipo(ticker, alpha_vantage_api_key)
-                ipo_date = alternative_data["IPO Date"]
-                kpi = alternative_data["KPI"]
-            else:
-                ipo_date = eps_pe_ipo_kpi.get("IPO Date", "N/A")
-                kpi = eps_pe_ipo_kpi["KPI"]
             
             st.write(f"EPS: {eps_pe_ipo_kpi['EPS']}")
             st.write(f"PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}")
-            st.write(f"IPO Date: {ipo_date}")
-            st.write(f"KPI: {kpi}")
+            st.write(f"IPO Price: {eps_pe_ipo_kpi['IPO Price']}")
+            st.write(f"High: {eps_pe_ipo_kpi['High']}")
+            st.write(f"Low: {eps_pe_ipo_kpi['Low']}")
+            st.write(f"Open: {eps_pe_ipo_kpi['Open']}")
+            st.write(f"Close: {eps_pe_ipo_kpi['Previous Close']}")
+            st.write(f"KPI: {eps_pe_ipo_kpi['KPI']}")
             #st.write(f"Current Price: ₹{current_price:.2f}")
+'''
+        with col3:
+            st.subheader("Live News")
+            news_api_key = "31739ed855eb4759908a898ab99a43e7"
+            query = company
+            news_articles = fetch_live_news(news_api_key, query)
+            news_text = ""
+            for article in news_articles:
+                news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
+            st.text_area("Live News", news_text, height=150)
+        
+            st.subheader(f"{company} EPS, PE, IPO Price, High, Low, Open, Close, and KPI")
+            
+            # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
+            eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
+        
+            # Display key financial metrics
+            st.write(f"**EPS:** {eps_pe_ipo_kpi['EPS']}")
+            st.write(f"**PE Ratio:** {eps_pe_ipo_kpi['PE Ratio']}")
+            st.write(f"**IPO Date:** {eps_pe_ipo_kpi['IPO Date']}")
+            st.write(f"**IPO Price:** {eps_pe_ipo_kpi['IPO Price']}")
+            st.write(f"**High:** {eps_pe_ipo_kpi['High']}")
+            st.write(f"**Low:** {eps_pe_ipo_kpi['Low']}")
+            st.write(f"**Open:** {eps_pe_ipo_kpi['Open']}")
+            st.write(f"**Close:** {eps_pe_ipo_kpi['Previous Close']}")
+            st.write(f"**KPI:** {eps_pe_ipo_kpi['KPI']}")
 
 if __name__ == "__main__":
     main()

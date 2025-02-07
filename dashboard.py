@@ -261,30 +261,7 @@ def main():
             )
 
             st.plotly_chart(fig)
-'''
-        with col3:
-            st.subheader("Live News")
-            news_api_key = "31739ed855eb4759908a898ab99a43e7"
-            query = company
-            news_articles = fetch_live_news(news_api_key, query)
-            news_text = ""
-            for article in news_articles:
-                news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
-            st.text_area("Live News", news_text, height=150)
-        
-            st.subheader(f"{company} EPS, PE, IPO Price, High, Low, Open, Close, and KPI")
-            eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-            
-            st.write(f"EPS: {eps_pe_ipo_kpi['EPS']}")
-            st.write(f"PE Ratio: {eps_pe_ipo_kpi['PE Ratio']}")
-            st.write(f"IPO Price: {eps_pe_ipo_kpi['IPO Price']}")
-            st.write(f"High: {eps_pe_ipo_kpi['High']}")
-            st.write(f"Low: {eps_pe_ipo_kpi['Low']}")
-            st.write(f"Open: {eps_pe_ipo_kpi['Open']}")
-            st.write(f"Close: {eps_pe_ipo_kpi['Previous Close']}")
-            st.write(f"KPI: {eps_pe_ipo_kpi['KPI']}")
-            #st.write(f"Current Price: ₹{current_price:.2f}")
-'''
+
         with col3:
             st.subheader("Live News")
             news_api_key = "31739ed855eb4759908a898ab99a43e7"

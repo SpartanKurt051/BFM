@@ -182,7 +182,7 @@ def plot_buying_decision(company_name, data):
 
     # Update layout with titles and labels
     fig.update_layout(
-        title=f'{company_name} - Buying Decision',
+        title=f'{company_name} - Buying & Selling Decision',
         xaxis_title='Date',
         yaxis_title='Opening Price',
         hovermode='x unified'
@@ -213,7 +213,7 @@ def main():
     
     # Display key financial metrics in horizontal format next to the title
     metrics_html = (
-        f"<div style='float: right; color: goldenrod; white-space: nowrap; animation: scroll-left 10s linear infinite;'>"
+        f"<div style='float: right; color: green; white-space: nowrap; animation: scroll-left 10s linear infinite;'>"
         f"<span>EPS:</span> <span>{eps_pe_ipo_kpi['EPS']}</span> &nbsp;&nbsp;"
         f"<span>PE Ratio:</span> <span>{eps_pe_ipo_kpi['PE Ratio']}</span> &nbsp;&nbsp;"
         f"<span>IPO Date:</span> <span>{eps_pe_ipo_kpi['IPO Date']}</span> &nbsp;&nbsp;"
@@ -243,7 +243,7 @@ def main():
     page = st.sidebar.selectbox("Choose a page", ["Page 1", "Page 2"])
     
     if (page == "Page 2"):
-        col1, col2, col3 = st.columns([4, 3, 2])
+        col1, col2, col3 = st.columns([4, 2.5, 2.5])
     
         with col1:
             st.subheader("Opening Price Prediction")
@@ -325,7 +325,7 @@ def main():
                 news_text += f"{article['title']}: {article['description']}\n\n"
             st.text_area("Live News", news_text, height=150)
 
-            st.subheader("Buying Decision")
+            st.subheader("Buying & Selling Decision")
             plot_buying_decision(company, filtered_data)
 
 if __name__ == "__main__":

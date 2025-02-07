@@ -78,7 +78,7 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "High": info.get("dayHigh"),
         "Low": info.get("dayLow"),
         "Open": info.get("open"),
-        "Previous Close": info.get("previousClose"),
+        "Previous Close": info.get("previousClose")
         #"IPO Price": "N/A"  # IPO price can be manually added if known
     }
     return data

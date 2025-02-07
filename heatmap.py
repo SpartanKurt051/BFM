@@ -213,7 +213,7 @@ def main():
     
     # Display key financial metrics in horizontal format next to the title
     metrics_html = (
-        f"<div style='float: right;'>"
+        f"<div style='float: right; color: green; white-space: nowrap; animation: scroll-left 10s linear infinite;'>"
         f"<span>EPS:</span> <span>{eps_pe_ipo_kpi['EPS']}</span> &nbsp;&nbsp;"
         f"<span>PE Ratio:</span> <span>{eps_pe_ipo_kpi['PE Ratio']}</span> &nbsp;&nbsp;"
         f"<span>IPO Date:</span> <span>{eps_pe_ipo_kpi['IPO Date']}</span> &nbsp;&nbsp;"
@@ -226,6 +226,17 @@ def main():
         f"</div>"
     )
     st.markdown(metrics_html, unsafe_allow_html=True)
+    st.markdown(
+        """
+        <style>
+        @keyframes scroll-left {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
     
     # Page filter
     st.sidebar.header("Select Page")

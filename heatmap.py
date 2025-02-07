@@ -224,10 +224,6 @@ def main():
             filtered_data = opening_price_data[opening_price_data['Year'] == year]
             st.dataframe(filtered_data, height=200)  # Decrease height of the opening price data chart
 
-            # Plot buying decision
-            st.subheader("Buying Decision")
-            plot_buying_decision(company, filtered_data)
-
         with col2:
             st.subheader(f"About {company}")
             company_info = fetch_company_info(ticker)
@@ -293,6 +289,9 @@ def main():
             for article in news_articles:
                 news_text += f"{article['title']}: {article['description']}\n\n"
             st.text_area("Live News", news_text, height=150)
+
+            st.subheader("Buying Decision")
+            plot_buying_decision(company, filtered_data)
 
             st.subheader(f"{company} EPS, PE, IPO Price, High, Low, Open, Close, and KPI")
             

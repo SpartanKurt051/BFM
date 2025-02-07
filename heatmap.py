@@ -289,9 +289,10 @@ def main():
             news_api_key = "31739ed855eb4759908a898ab99a43e7"
             query = company
             news_articles = fetch_live_news(news_api_key, query)
+            news_text = ""
             for article in news_articles:
-                st.markdown(f"<span style='color: purple; font-weight: bold;'>{article['title']}</span>: <span style='color: goldenrod;'>{article['description']}</span>", unsafe_allow_html=True)
-                st.markdown(f"[Read more]({article['url']})")
+                news_text += f"<span style='color: purple; font-weight: bold;'>{article['title']}</span>: <span style='color: goldenrod;'>{article['description']}</span><br><br>"
+            st.markdown(f"<div style='height: 150px; overflow-y: scroll;'>{news_text}</div>", unsafe_allow_html=True)
 
             st.subheader(f"{company} EPS, PE, IPO Price, High, Low, Open, Close, and KPI")
             

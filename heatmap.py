@@ -32,7 +32,7 @@ def fetch_fundamental_data(ticker):
     for date in dates:
         try:
             total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index) else None
+            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance[...]
             net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
         except Exception:
             total_revenue, debt_to_equity, net_cashflow = None, None, None
@@ -128,7 +128,7 @@ def plot_actual_vs_predicted(company_name, file_name):
     
     # Calculate the error percentage for January 24, 2025
     specific_date = pd.Timestamp('2025-01-24')
-    if specific_date in data.index:
+    if (specific_date in data.index):
         actual_price = data.loc[specific_date, 'Actual Price']
         predicted_price = data.loc[specific_date, 'Predicted Price']
         error_percentage = abs((actual_price - predicted_price) / actual_price) * 100
@@ -163,6 +163,24 @@ def plot_actual_vs_predicted(company_name, file_name):
     st.plotly_chart(fig)
     st.write(error_text)
 
+# Plot opening prices throughout the year
+def plot_buying_decision(company_name, data):
+    fig = go.Figure()
+
+    # Add trace for opening prices
+    fig.add_trace(go.Scatter(x=data['Date'], y=data['Opening Price'], mode='lines', name='Opening Price', line=dict(color='blue')))
+
+    # Update layout with titles and labels
+    fig.update_layout(
+        title=f'{company_name} - Buying Decision',
+        xaxis_title='Date',
+        yaxis_title='Opening Price',
+        hovermode='x unified'
+    )
+
+    # Use Streamlit to display the plot
+    st.plotly_chart(fig)
+
 # Main function
 def main():
     st.title("📈 Stock Market Dashboard")
@@ -184,7 +202,7 @@ def main():
     st.sidebar.header("Select Page")
     page = st.sidebar.selectbox("Choose a page", ["Page 1", "Page 2"])
     
-    if page == "Page 2":
+    if (page == "Page 2"):
         col1, col2, col3 = st.columns([4, 3, 2])
     
         with col1:
@@ -205,6 +223,10 @@ def main():
             st.subheader("Opening Price Data")
             filtered_data = opening_price_data[opening_price_data['Year'] == year]
             st.dataframe(filtered_data, height=200)  # Decrease height of the opening price data chart
+
+            # Plot buying decision
+            st.subheader("Buying Decision")
+            plot_buying_decision(company, filtered_data)
 
         with col2:
             st.subheader(f"About {company}")
@@ -256,7 +278,7 @@ def main():
             fig.update_layout(
                 title='Company Weightage Heatmap',
                 xaxis=dict(showticklabels=False),
-                yaxis=dict(showticklabels=False),
+                yaxis=dict(showticklabels(False),
                 height=535  # Increase height of the heatmap
             )
 

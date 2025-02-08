@@ -23,7 +23,8 @@ def fetch_nifty_energy_data():
 def load_nifty_energy_csv():
     url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_stock.csv"
     data = pd.read_csv(url)
-    data['Date'] = pd.to_datetime(data['﻿Date'])
+    data = data.rename(columns=lambda x: x.strip())  # Strip any whitespace or special characters
+    data['Date'] = pd.to_datetime(data['Date'])
     return data
 
 def main():

@@ -316,7 +316,7 @@ def main():
         df_stock = fetch_stock_data(ticker)
         year_data = df_stock[df_stock.index.year == year]
         
-        st.subheader("Company Weightage Heatmap")
+        st.subheader("Top 10 Company's Weightage in NSE Heatmap")
 
         data_url = "https://raw.githubusercontent.com/SpartanKurt051/BFM/main/Heatmap.csv"
         df = pd.read_csv(data_url)
@@ -360,7 +360,7 @@ def main():
         news_text = ""
         for article in news_articles:
             news_text += f"{article['title']}: {article['description']}\n\n"
-        st.text_area("Live News", news_text, height=150)
+        st.text_area(f"Latest updates about {company}", news_text, height=150)
 
         st.subheader("Buying & Selling Decision")
         plot_buying_decision(company, filtered_data)

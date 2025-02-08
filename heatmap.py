@@ -242,7 +242,20 @@ def main():
     st.sidebar.header("Select Page")
     page = st.sidebar.selectbox("Choose a page", ["Page 1", "Page 2"])
     
-    if (page == "Page 2"):
+    if page == "Page 1":
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("Dummy Data Column 1")
+            st.write("This is some dummy data for column 1 on Page 1.")
+            st.write("You can update this section with actual data or visualizations.")
+        
+        with col2:
+            st.subheader("Dummy Data Column 2")
+            st.write("This is some dummy data for column 2 on Page 1.")
+            st.write("You can update this section with actual data or visualizations.")
+    
+    if page == "Page 2":
         col1, col2, col3 = st.columns([4, 2.5, 2.5])
     
         with col1:

@@ -173,17 +173,6 @@ def plot_buying_decision(company_name, data):
     # Use Streamlit to display the plot
     st.plotly_chart(fig)
 
-def plot_interactive_graph(data):
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=data['Date'], y=data['Opening Price'], mode='lines', name='Opening Price'))
-    fig.update_layout(
-        title='Interactive Graph of Opening Prices',
-        xaxis_title='Date',
-        yaxis_title='Opening Price',
-        hovermode='x unified'
-    )
-    st.plotly_chart(fig)
-
 def main():
     st.title("📈 Stock Market Dashboard")
     
@@ -240,7 +229,6 @@ def main():
         with col1:
             st.subheader("Historical Stock Data")
             historical_data = fetch_stock_data(ticker)
-            plot_interactive_graph(historical_data.reset_index())
             st.write(historical_data)
         
         with col2:

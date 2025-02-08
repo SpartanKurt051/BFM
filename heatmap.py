@@ -249,16 +249,16 @@ def main():
         - Adani Transmission Ltd.
         - Adani Green Energy Ltd.
         """
-        st.text_area("", nift_energy_info, height=150)
+        st.text_area("", nift_energy_info, height=250)
         
         st.subheader("Live News")
         news_api_key = "31739ed855eb4759908a898ab99a43e7"
-        query = "Adani"
+        query = "NIFTY ENERGY"
         news_articles = fetch_live_news(news_api_key, query)
         news_text = ""
         for article in news_articles:
             news_text += f"{article['title']}: {article['description']}\n\n"
-        st.text_area("Live News", news_text, height=300)  # Increased height from 150 to 300
+        st.text_area("Live News", news_text, height=201) 
         
         st.subheader("NIFTYENERGY_Performance CSV")
         csv_url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_Performance.csv"

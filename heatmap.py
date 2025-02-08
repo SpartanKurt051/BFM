@@ -246,13 +246,9 @@ def main():
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("Dummy Data Column 1")
-            st.write("You can update this section with actual data or visualizations.")
-        
+            st.subheader("Dummy Data Column 1")        
         with col2:
             st.subheader("Dummy Data Column 2")
-            st.write("You can update this section with actual data or visualizations.")
-    
     if page == "Page 2":
         col1, col2, col3 = st.columns([4, 2.5, 2.5])
     

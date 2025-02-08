@@ -201,7 +201,7 @@ def plot_buying_decision(company_name, data):
 
 # Main function
 def main():
-    st.markdown("<h1 style='text-align: center; color: goldenrod;'>📈 Stock Market Dashboard</h1>", unsafe_allow_html=True)
+    st.title("📈 Stock Market Dashboard")
     
     # Sidebar
     st.sidebar.header("Select Company")
@@ -227,14 +227,16 @@ def main():
         fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Date', yaxis_title='Open Price')
         st.plotly_chart(fig)
         
-        st.markdown("<h2 style='color: green;'>Historical Stock Data of NIFTY ENERGY Index</h2>", unsafe_allow_html=True)
+        st.subheader("Historical Stock Data of NIFTY ENERGY Index")
         st.write(csv_data)
         
     with col2:
-        st.markdown("<h2 style='color: green;'>About Nifty Energy Index</h2>", unsafe_allow_html=True)
+        st.subheader("About Nifty Energy Index")
         nift_energy_info = """
         The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India. The Nifty Energy Index comprises of[...]
+
         The base date of the Nifty Energy Index is April 01, 2005 and base value is 1000.
+
         Here are some of the major constituents of the Nifty Energy Index:
         - Reliance Industries Ltd.
         - Indian Oil Corporation Ltd.
@@ -249,16 +251,16 @@ def main():
         """
         st.text_area("", nift_energy_info, height=250)
         
-        st.markdown("<h2 style='color: green;'>Live News</h2>", unsafe_allow_html=True)
+        st.subheader("Live News")
         news_api_key = "31739ed855eb4759908a898ab99a43e7"
         query = "NIFTY ENERGY"
         news_articles = fetch_live_news(news_api_key, query)
         news_text = ""
         for article in news_articles:
             news_text += f"{article['title']}: {article['description']}\n\n"
-        st.text_area("Live News", news_text, height=201)
+        st.text_area("Live News", news_text, height=201) 
         
-        st.markdown("<h2 style='color: green;'>NIFTYENERGY_Performance CSV</h2>", unsafe_allow_html=True)
+        st.subheader("NIFTYENERGY_Performance CSV")
         csv_url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_Performance.csv"
         df = pd.read_csv(csv_url)
         st.write(df)
@@ -293,7 +295,7 @@ def main():
             unsafe_allow_html=True
         )
 
-        st.markdown("<h2 style='color: green;'>Opening Price Prediction</h2>", unsafe_allow_html=True)
+        st.subheader("Opening Price Prediction")
 
         current_price = fetch_current_stock_price(ticker)
         st.markdown(f"<h4 style='color: green;'>Current Stock Price: ₹{current_price:.2f}</h4>", unsafe_allow_html=True)
@@ -302,22 +304,23 @@ def main():
         plot_actual_vs_predicted(company, f"{company}_opening_price_data_with_predictions.csv")
 
         year = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
-        st.markdown("<h2 style='color: green;'>Opening Price Data</h2>", unsafe_allow_html=True)
+        st.subheader("Opening Price Data")
         filtered_data = opening_price_data[opening_price_data['Year'] == year]
         st.dataframe(filtered_data, height=200)
         
     with col2:
-        st.markdown(f"<h2 style='color: green;'>About {company}</h2>", unsafe_allow_html=True)
+        st.subheader(f"About {company}")
         company_info = fetch_company_info(ticker)
         st.text_area("Company Information", company_info, height=150)
 
         df_stock = fetch_stock_data(ticker)
         year_data = df_stock[df_stock.index.year == year]
         
-        st.markdown("<h2 style='color: green;'>Top 10 Company's Weightage in NSE Heatmap</h2>", unsafe_allow_html=True)
+        st.subheader("Top 10 Company's Weightage in NSE Heatmap")
 
         data_url = "https://raw.githubusercontent.com/SpartanKurt051/BFM/main/Heatmap.csv"
         df = pd.read_csv(data_url)
+        #df.columns are stripped of whitespace
         df.columns = df.columns.str.strip()
         df.set_index('Company', inplace=True)
 
@@ -350,7 +353,7 @@ def main():
         st.plotly_chart(fig)
 
     with col3:
-        st.markdown("<h2 style='color: green;'>Live News</h2>", unsafe_allow_html=True)
+        st.subheader("Live News")
         news_api_key = "31739ed855eb4759908a898ab99a43e7"
         query = company
         news_articles = fetch_live_news(news_api_key, query)
@@ -359,7 +362,7 @@ def main():
             news_text += f"{article['title']}: {article['description']}\n\n"
         st.text_area(f"Latest updates about {company}", news_text, height=150)
 
-        st.markdown("<h2 style='color: green;'>Buying & Selling Decision</h2>", unsafe_allow_html=True)
+        st.subheader("Buying & Selling Decision")
         plot_buying_decision(company, filtered_data)
 
 if __name__ == "__main__":

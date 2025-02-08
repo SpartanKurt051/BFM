@@ -18,6 +18,14 @@ def fetch_nifty_energy_data():
     stock_data = yf.download(ticker, start="2020-01-01", end="2025-01-24")
     return stock_data
 
+# New function to fetch data from the CSV file
+@st.cache_data
+def load_nifty_energy_csv():
+    url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_stock.csv"
+    data = pd.read_csv(url)
+    data['Date'] = pd.to_datetime(data['﻿Date'])
+    return data
+
 def main():
     st.title("📈 Stock Market Dashboard")
     
@@ -45,6 +53,12 @@ def main():
             st.subheader("Historical Stock Data of NIFTY ENERGY Index")
             nifty_energy_data = fetch_nifty_energy_data()
             st.write(nifty_energy_data)
+
+            # Load data from CSV and create a graph
+            csv_data = load_nifty_energy_csv()
+            fig = go.Figure(data=[go.Scatter(x=csv_data['Date'], y=csv_data['Open'], mode='lines', name='Open')])
+            fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Date', yaxis_title='Open Price')
+            st.plotly_chart(fig)
         
         with col2:
             st.subheader("About Nifty Energy Index")

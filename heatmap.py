@@ -172,7 +172,6 @@ def plot_actual_vs_predicted(company_name, file_name):
     st.write(error_text)
 
 # Plot opening prices throughout the year
-# Plot opening prices throughout the year
 def plot_buying_decision(company_name, data):
     fig = go.Figure()
 
@@ -220,6 +219,33 @@ def main():
     # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
     eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
     
+    # Display key financial metrics in horizontal format next to the title
+    metrics_html = (
+        f"<div style='float: right; color: goldenrod; white-space: nowrap; animation: scroll-left 10s linear infinite;'>"
+        f"<span>EPS:</span> <span>{eps_pe_ipo_kpi['EPS']}</span> &nbsp;&nbsp;"
+        f"<span>PE Ratio:</span> <span>{eps_pe_ipo_kpi['PE Ratio']}</span> &nbsp;&nbsp;"
+        f"<span>IPO Date:</span> <span>{eps_pe_ipo_kpi['IPO Date']}</span> &nbsp;&nbsp;"
+        f"<span>IPO Price:</span> <span>{eps_pe_ipo_kpi['IPO Price']}</span> &nbsp;&nbsp;"
+        f"<span>High:</span> <span>{eps_pe_ipo_kpi['High']}</span> &nbsp;&nbsp;"
+        f"<span>Low:</span> <span>{eps_pe_ipo_kpi['Low']}</span> &nbsp;&nbsp;"
+        f"<span>Open:</span> <span>{eps_pe_ipo_kpi['Open']}</span> &nbsp;&nbsp;"
+        f"<span>Close:</span> <span>{eps_pe_ipo_kpi['Previous Close']}</span> &nbsp;&nbsp;"
+        f"<span>KPI:</span> <span>{eps_pe_ipo_kpi['KPI']}</span>"
+        f"</div>"
+    )
+    st.markdown(metrics_html, unsafe_allow_html=True)
+    st.markdown(
+        """
+        <style>
+        @keyframes scroll-left {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
     col1, col2 = st.columns(2)
     
     with col1:
@@ -260,33 +286,6 @@ def main():
     col1, col2, col3 = st.columns([4, 2.5, 2.5])
     
     with col1:
-        # Display key financial metrics in horizontal format next to the title
-        metrics_html = (
-            f"<div style='float: right; color: goldenrod; white-space: nowrap; animation: scroll-left 10s linear infinite; font-size: 20px;'>"
-            f"<span>EPS:</span> <span>{eps_pe_ipo_kpi['EPS']}</span> &nbsp;&nbsp;"
-            f"<span>PE Ratio:</span> <span>{eps_pe_ipo_kpi['PE Ratio']}</span> &nbsp;&nbsp;"
-            f"<span>IPO Date:</span> <span>{eps_pe_ipo_kpi['IPO Date']}</span> &nbsp;&nbsp;"
-            f"<span>IPO Price:</span> <span>{eps_pe_ipo_kpi['IPO Price']}</span> &nbsp;&nbsp;"
-            f"<span>High:</span> <span>{eps_pe_ipo_kpi['High']}</span> &nbsp;&nbsp;"
-            f"<span>Low:</span> <span>{eps_pe_ipo_kpi['Low']}</span> &nbsp;&nbsp;"
-            f"<span>Open:</span> <span>{eps_pe_ipo_kpi['Open']}</span> &nbsp;&nbsp;"
-            f"<span>Close:</span> <span>{eps_pe_ipo_kpi['Previous Close']}</span> &nbsp;&nbsp;"
-            f"<span>KPI:</span> <span>{eps_pe_ipo_kpi['KPI']}</span>"
-            f"</div>"
-        )
-        st.markdown(metrics_html, unsafe_allow_html=True)
-        st.markdown(
-            """
-            <style>
-            @keyframes scroll-left {
-                0% { transform: translateX(100%); }
-                100% { transform: translateX(-100%); }
-            }
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
-
         st.subheader("Opening Price Prediction")
 
         current_price = fetch_current_stock_price(ticker)
@@ -319,11 +318,11 @@ def main():
         num_cols = 5
         num_rows = int(np.ceil(num_companies / num_cols))
 
-        padded_weights = np.pad(df['Weight'].values, (0, num_rows * num cols - num_companies), mode='constant', constant values=np.nan)
-        padded_companies = np.pad(df.index.values, (0, num rows * num cols - num companies), mode='constant', constant values='')
+        padded_weights = np.pad(df['Weight'].values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values=np.nan)
+        padded_companies = np.pad(df.index.values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values='')
 
-        heatmap_data = padded_weights.reshape(num_rows, num cols)
-        hovertext = np.array([f"{company}<br>Weight: {weight:.2f}<br>Rank: {rank+1}" for rank, (company, weight) in enumerate(zip(padded_companies, padded_weights))]).reshape(num_rows, num cols)
+        heatmap_data = padded_weights.reshape(num_rows, num_cols)
+        hovertext = np.array([f"{company}<br>Weight: {weight:.2f}<br>Rank: {rank+1}" for rank, (company, weight) in enumerate(zip(padded_companies, padded_weights))]).reshape(num_rows, num_cols)
 
         fig = go.Figure(data=go.Heatmap(
             z=heatmap_data,
@@ -337,7 +336,7 @@ def main():
         fig.update_layout(
             title='Company Weightage Heatmap',
             xaxis=dict(showticklabels=False),
-            yaxis=dict(showticklabels(False),
+            yaxis=dict(showticklabels=False),
             height=501,
         )
 

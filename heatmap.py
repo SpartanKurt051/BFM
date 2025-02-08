@@ -275,6 +275,13 @@ def main():
             st.subheader("About Nift Energy Index")
             nift_energy_info = fetch_nift_energy_index_info()
             st.text_area("Nift Energy Index Information", nift_energy_info, height=150)
+            
+            # Upload and display NIFTYENERGY_PERFORMANCE CSV file
+            st.subheader("NIFTYENERGY_PERFORMANCE CSV")
+            uploaded_file = st.file_uploader("Choose a file", type="csv")
+            if uploaded_file is not None:
+                df = pd.read_csv(uploaded_file)
+                st.write(df)
     
     if page == "Page 2":
         col1, col2, col3 = st.columns([4, 2.5, 2.5])

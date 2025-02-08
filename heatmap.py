@@ -32,7 +32,7 @@ def fetch_fundamental_data(ticker):
     for date in dates:
         try:
             total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index) else None
+            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance[...]
             net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
         except Exception:
             total_revenue, debt_to_equity, net_cashflow = None, None, None
@@ -88,6 +88,27 @@ def fetch_company_info(ticker):
     stock = yf.Ticker(ticker)
     info = stock.info
     return info.get("longBusinessSummary", "No information available.")
+
+@st.cache_data
+def fetch_nift_energy_index_info():
+    # Sample data for Nift Energy Index
+    return """
+    The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India. The Nifty Energy Index comprises of 10 stocks from the energy sector listed on the National Stock Exchange (NSE).
+
+    The base date of the Nifty Energy Index is April 01, 2005 and base value is 1000.
+
+    Here are some of the major constituents of the Nifty Energy Index:
+    - Reliance Industries Ltd.
+    - Indian Oil Corporation Ltd.
+    - NTPC Ltd.
+    - Power Grid Corporation of India Ltd.
+    - Bharat Petroleum Corporation Ltd.
+    - GAIL (India) Ltd.
+    - Oil and Natural Gas Corporation Ltd.
+    - Tata Power Company Ltd.
+    - Adani Transmission Ltd.
+    - Adani Green Energy Ltd.
+    """
 
 @st.cache_data
 def load_opening_price_data(ticker):
@@ -246,9 +267,15 @@ def main():
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("Dummy Data Column 1")        
+            st.subheader("Dummy Data Column 1")
+            st.write("This is some dummy data for column 1 on Page 1.")
+            st.write("You can update this section with actual data or visualizations.")
+        
         with col2:
-            st.subheader("Dummy Data Column 2")
+            st.subheader("About Nift Energy Index")
+            nift_energy_info = fetch_nift_energy_index_info()
+            st.text_area("Nift Energy Index Information", nift_energy_info, height=150)
+    
     if page == "Page 2":
         col1, col2, col3 = st.columns([4, 2.5, 2.5])
     

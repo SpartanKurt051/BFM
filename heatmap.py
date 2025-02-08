@@ -145,7 +145,7 @@ def main():
         fig.update_layout(
             title='Company Weightage Heatmap',
             xaxis=dict(showticklabels=False),
-            yaxis=dict(showticklabels(False),
+            yaxis=dict(showticklabels=False),
             height=501
         )
 

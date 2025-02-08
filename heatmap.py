@@ -146,7 +146,7 @@ def main():
             title='Company Weightage Heatmap',
             xaxis=dict(showticklabels=False),
             yaxis=dict(showticklabels(False),
-            height=501,
+            height=501
         )
 
         st.plotly_chart(fig)

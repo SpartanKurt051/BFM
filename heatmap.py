@@ -296,7 +296,7 @@ def main():
             st.subheader("NIFTYENERGY_Performance CSV")
             csv_url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_Performance.csv"
             df = pd.read_csv(csv_url)
-            st.write(df) or visualizations.")
+            st.write(df) 
     
     if page == "Page 2":
         col1, col2, col3 = st.columns([4, 2.5, 2.5])

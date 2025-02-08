@@ -261,15 +261,15 @@ def main():
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("Historical Stock Data of NIFTY ENERGY Index")
-            nifty_energy_data = fetch_nifty_energy_data()
-            st.write(nifty_energy_data)
-
-            # Load data from CSV and create a graph
             csv_data = load_nifty_energy_csv()
             fig = go.Figure(data=[go.Scatter(x=csv_data['Date'], y=csv_data['Open'], mode='lines', name='Open')])
             fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Date', yaxis_title='Open Price')
             st.plotly_chart(fig)
+            
+            st.subheader("Historical Stock Data of NIFTY ENERGY Index")
+            nifty_energy_data = fetch_nifty_energy_data()
+            st.write(nifty_energy_data)
+            
         
         with col2:
             st.subheader("About Nifty Energy Index")

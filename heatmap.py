@@ -280,6 +280,9 @@ def main():
             st.subheader("NIFTYENERGY_Performance CSV")
             csv_url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_Performance.csv"
             df = pd.read_csv(csv_url)
+            
+            # Remove content of cells showing "Unnamed: 1" and "Unnamed 3"
+            df = df.drop(columns=["Unnamed: 1", "Unnamed: 3"], errors='ignore')
             st.write(df)
     
     if page == "Page 2":

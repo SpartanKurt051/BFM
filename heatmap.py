@@ -15,12 +15,6 @@ def load_css(file_name):
 load_css("styles.css")
 
 @st.cache_data
-def fetch_nifty_energy_data():
-    ticker = "^NSEI"  # Replace with the correct ticker for NIFTY ENERGY if different
-    stock_data = yf.download(ticker, start="2020-01-01", end="2025-01-24")
-    return stock_data
-
-@st.cache_data
 def load_nifty_energy_csv():
     url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_stock.csv"
     data = pd.read_csv(url)
@@ -261,8 +255,7 @@ def main():
         st.plotly_chart(fig)
         
         st.subheader("Historical Stock Data of NIFTY ENERGY Index")
-        nifty_energy_data = fetch_nifty_energy_data()
-        st.write(nifty_energy_data)
+        st.write(csv_data)
         
     with col2:
         st.subheader("About Nifty Energy Index")
@@ -312,7 +305,7 @@ def main():
         st.text_area("Company Information", company_info, height=150)
 
         df_stock = fetch_stock_data(ticker)
-        year_data = df_stock[df_stock.index.year == year]
+        year_data = df_stock[df_stock.index.year == year)
         
         st.subheader("Company Weightage Heatmap")
 

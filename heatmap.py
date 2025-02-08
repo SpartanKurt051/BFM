@@ -201,7 +201,7 @@ def plot_buying_decision(company_name, data):
 
 # Main function
 def main():
-    st.title("📈 Stock Market Dashboard")
+    st.markdown("<h1 style='text-align: center; color: goldenrod;'>📈 Stock Market Dashboard</h1>", unsafe_allow_html=True)
     
     # Sidebar
     st.sidebar.header("Select Company")

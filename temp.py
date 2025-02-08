@@ -257,7 +257,7 @@ def main():
     st.sidebar.header("Select Page")
     page = st.sidebar.selectbox("Choose a page", ["Page 1", "Page 2"])
     
-    if page == "Page 1":
+    if page == "Page 1" or page == "Page 2":
         col1, col2 = st.columns(2)
         
         with col1:
@@ -298,7 +298,7 @@ def main():
             df = pd.read_csv(csv_url)
             st.write(df) 
     
-    if page == "Page 2":
+    if page == "Page 1" or page == "Page 2":
         col1, col2, col3 = st.columns([4, 2.5, 2.5])
     
         with col1:

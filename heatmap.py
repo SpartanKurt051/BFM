@@ -139,7 +139,7 @@ def plot_actual_vs_predicted(company_name, file_name):
     if (specific_date in data.index):
         actual_price = data.loc[specific_date, 'Actual Price']
         predicted_price = data.loc[specific_date, 'Predicted Price']
-        error_percentage = abs((actual_price - predicted_price) / actual price) * 100
+        error_percentage = abs((actual_price - predicted_price) / actual_price) * 100
         error_text = f"Error percentage as on January 24, 2025: {error_percentage:.2f}%"
     else:
         error_text = "No data for January 24, 2025"

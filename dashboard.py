@@ -15,6 +15,21 @@ def load_css(file_name):
 load_css("styles.css")
 
 @st.cache_data
+def fetch_nifty_energy_data():
+    ticker = "^NSEI"  # Replace with the correct ticker for NIFTY ENERGY if different
+    stock_data = yf.download(ticker, start="2020-01-01", end="2025-01-24")
+    return stock_data
+
+# New function to fetch data from the CSV file
+@st.cache_data
+def load_nifty_energy_csv():
+    url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_stock.csv"
+    data = pd.read_csv(url)
+    data = data.rename(columns=lambda x: x.strip())  # Strip any whitespace or special characters
+    data['Date'] = pd.to_datetime(data['Date'])
+    return data
+    
+@st.cache_data
 def fetch_stock_data(ticker):
     return yf.download(ticker, start="2020-01-01", end="2025-01-25")
 
@@ -128,7 +143,7 @@ def plot_actual_vs_predicted(company_name, file_name):
     
     # Calculate the error percentage for January 24, 2025
     specific_date = pd.Timestamp('2025-01-24')
-    if specific_date in data.index:
+    if (specific_date in data.index):
         actual_price = data.loc[specific_date, 'Actual Price']
         predicted_price = data.loc[specific_date, 'Predicted Price']
         error_percentage = abs((actual_price - predicted_price) / actual_price) * 100
@@ -163,10 +178,38 @@ def plot_actual_vs_predicted(company_name, file_name):
     st.plotly_chart(fig)
     st.write(error_text)
 
+# Plot opening prices throughout the year
+def plot_buying_decision(company_name, data):
+    fig = go.Figure()
+
+    # Ensure 'Opening Price' column exists
+    if 'Opening Price' not in data.columns:
+        st.error("Opening Price column is missing in the data.")
+        return
+
+    # Compare each day's opening price with the previous day's price
+    colors = ['red' if data['Opening Price'].iloc[i] < data['Opening Price'].iloc[i - 1] else 'green' for i in range(1, len(data))]
+    colors.insert(0, 'red')  # Initial day color
+
+    # Add trace for opening prices with color based on comparison
+    fig.add_trace(go.Scatter(x=data['Date'], y=data['Opening Price'], mode='lines+markers', name='Opening Price',
+                             marker=dict(color=colors)))
+
+    # Update layout with titles and labels
+    fig.update_layout(
+        title=f'{company_name} - Buying & Selling Decision',
+        xaxis_title='Date',
+        yaxis_title='Opening Price',
+        hovermode='x unified'
+    )
+
+    # Use Streamlit to display the plot
+    st.plotly_chart(fig)
+
 # Main function
 def main():
     st.title("📈 Stock Market Dashboard")
-
+    
     # Sidebar
     st.sidebar.header("Select Company")
     companies = {
@@ -180,18 +223,90 @@ def main():
     company = st.sidebar.selectbox("Choose a company", list(companies.keys()))
     ticker = companies[company]
 
+    # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
+    eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
+    
+    # Display key financial metrics in horizontal format next to the title
+    metrics_html = (
+        f"<div style='float: right; color: goldenrod; white-space: nowrap; animation: scroll-left 10s linear infinite;'>"
+        f"<span>EPS:</span> <span>{eps_pe_ipo_kpi['EPS']}</span> &nbsp;&nbsp;"
+        f"<span>PE Ratio:</span> <span>{eps_pe_ipo_kpi['PE Ratio']}</span> &nbsp;&nbsp;"
+        f"<span>IPO Date:</span> <span>{eps_pe_ipo_kpi['IPO Date']}</span> &nbsp;&nbsp;"
+        f"<span>IPO Price:</span> <span>{eps_pe_ipo_kpi['IPO Price']}</span> &nbsp;&nbsp;"
+        f"<span>High:</span> <span>{eps_pe_ipo_kpi['High']}</span> &nbsp;&nbsp;"
+        f"<span>Low:</span> <span>{eps_pe_ipo_kpi['Low']}</span> &nbsp;&nbsp;"
+        f"<span>Open:</span> <span>{eps_pe_ipo_kpi['Open']}</span> &nbsp;&nbsp;"
+        f"<span>Close:</span> <span>{eps_pe_ipo_kpi['Previous Close']}</span> &nbsp;&nbsp;"
+        f"<span>KPI:</span> <span>{eps_pe_ipo_kpi['KPI']}</span>"
+        f"</div>"
+    )
+    st.markdown(metrics_html, unsafe_allow_html=True)
+    st.markdown(
+        """
+        <style>
+        @keyframes scroll-left {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
     # Page filter
     st.sidebar.header("Select Page")
     page = st.sidebar.selectbox("Choose a page", ["Page 1", "Page 2"])
     
+    if page == "Page 1":
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("Historical Stock Data of NIFTY ENERGY Index")
+            nifty_energy_data = fetch_nifty_energy_data()
+            st.write(nifty_energy_data)
+
+            # Load data from CSV and create a graph
+            csv_data = load_nifty_energy_csv()
+            fig = go.Figure(data=[go.Scatter(x=csv_data['Date'], y=csv_data['Open'], mode='lines', name='Open')])
+            fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Date', yaxis_title='Open Price')
+            st.plotly_chart(fig)
+        
+        with col2:
+            st.subheader("About Nifty Energy Index")
+            nift_energy_info = """
+            The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India. The Nifty Energy Index comprises of 10 stocks from the energy sector listed on the National Stock Exchange (NSE).
+
+            The base date of the Nifty Energy Index is April 01, 2005 and base value is 1000.
+
+            Here are some of the major constituents of the Nifty Energy Index:
+            - Reliance Industries Ltd.
+            - Indian Oil Corporation Ltd.
+            - NTPC Ltd.
+            - Power Grid Corporation of India Ltd.
+            - Bharat Petroleum Corporation Ltd.
+            - GAIL (India) Ltd.
+            - Oil and Natural Gas Corporation Ltd.
+            - Tata Power Company Ltd.
+            - Adani Transmission Ltd.
+            - Adani Green Energy Ltd.
+            """
+            st.text_area("Nifty Energy Index Information", nift_energy_info, height=150)
+            
+            # Display NIFTYENERGY_Performance CSV file from the repository
+            st.subheader("NIFTYENERGY_Performance CSV")
+            csv_url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_Performance.csv"
+            df = pd.read_csv(csv_url)
+            st.write(df) 
+    
     if page == "Page 2":
-        col1, col2, col3 = st.columns([4, 3, 2])
+        col1, col2, col3 = st.columns([4, 2.5, 2.5])
     
         with col1:
             st.subheader("Opening Price Prediction")
 
             # Fetch current stock price
             current_price = fetch_current_stock_price(ticker)
+            #st.markdown(f"<h4>Current Stock Price: ₹{current_price:.2f}</h4>", unsafe_allow_html=True)
             st.markdown(f"<h4 style='color: green;'>Current Stock Price: ₹{current_price:.2f}</h4>", unsafe_allow_html=True)
 
             # Perform prediction on page load
@@ -211,14 +326,9 @@ def main():
             company_info = fetch_company_info(ticker)
             st.text_area("Company Information", company_info, height=150)
 
-            st.subheader(f"{company} Performance")
             df_stock = fetch_stock_data(ticker)
             year_data = df_stock[df_stock.index.year == year]
-            volume_range = st.slider("Volume Traded", min_value=int(year_data['Volume'].min()), max_value=int(year_data['Volume'].max()), value=int(year_data['Volume'].mean()), step=1)
             
-            # Display the selected volume range
-            st.write(f"Selected Volume Range: {volume_range}")
-
             st.subheader("Company Weightage Heatmap")
 
             # Load heatmap data
@@ -250,14 +360,14 @@ def main():
                 hoverinfo='text',
                 colorscale='YlOrBr',
                 showscale=True,
-                colorbar=dict(title='Weightage')
+                colorbar=dict(title='Weightage(in %)')
             ))
 
             fig.update_layout(
                 title='Company Weightage Heatmap',
                 xaxis=dict(showticklabels=False),
                 yaxis=dict(showticklabels=False),
-                height=535  # Increase height of the heatmap
+                height=501,# Increase height of the heatmap
             )
 
             st.plotly_chart(fig)
@@ -269,24 +379,11 @@ def main():
             news_articles = fetch_live_news(news_api_key, query)
             news_text = ""
             for article in news_articles:
-                news_text += f"{article['title']}\n\n{article['description']}\n\n[Read more]({article['url']})\n\n\n"
+                news_text += f"{article['title']}: {article['description']}\n\n"
             st.text_area("Live News", news_text, height=150)
-        
-            st.subheader(f"{company} EPS, PE, IPO Price, High, Low, Open, Close, and KPI")
-            
-            # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
-            eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-        
-            # Display key financial metrics
-            st.write(f"**EPS:** {eps_pe_ipo_kpi['EPS']}")
-            st.write(f"**PE Ratio:** {eps_pe_ipo_kpi['PE Ratio']}")
-            st.write(f"**IPO Date:** {eps_pe_ipo_kpi['IPO Date']}")
-            st.write(f"**IPO Price:** {eps_pe_ipo_kpi['IPO Price']}")
-            st.write(f"**High:** {eps_pe_ipo_kpi['High']}")
-            st.write(f"**Low:** {eps_pe_ipo_kpi['Low']}")
-            st.write(f"**Open:** {eps_pe_ipo_kpi['Open']}")
-            st.write(f"**Close:** {eps_pe_ipo_kpi['Previous Close']}")
-            st.write(f"**KPI:** {eps_pe_ipo_kpi['KPI']}")
+
+            st.subheader("Buying & Selling Decision")
+            plot_buying_decision(company, filtered_data)
 
 if __name__ == "__main__":
     main()

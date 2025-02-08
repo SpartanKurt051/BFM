@@ -258,7 +258,7 @@ def main():
         news_text = ""
         for article in news_articles:
             news_text += f"{article['title']}: {article['description']}\n\n"
-        st.text_area(" ", news_text, height=150)
+        st.text_area("Live News", news_text, height=300)  # Increased height from 150 to 300
         
         st.subheader("NIFTYENERGY_Performance CSV")
         csv_url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_Performance.csv"

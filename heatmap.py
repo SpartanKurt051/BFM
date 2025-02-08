@@ -360,7 +360,7 @@ def main():
         news_text = ""
         for article in news_articles:
             news_text += f"{article['title']}: {article['description']}\n\n"
-        st.text_area("Live News", news_text, height=150)
+        st.text_area("Latest updates about {company}", news_text, height=150)
 
         st.subheader("Buying & Selling Decision")
         plot_buying_decision(company, filtered_data)

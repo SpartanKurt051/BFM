@@ -316,7 +316,7 @@ def main():
         df_stock = fetch_stock_data(ticker)
         year_data = df_stock[df_stock.index.year == year]
         
-        st.subheader("Company Weightage Heatmap")
+        st.subheader("Top 10 Company's Weightage in NSE Heatmap")
 
         data_url = "https://raw.githubusercontent.com/SpartanKurt051/BFM/main/Heatmap.csv"
         df = pd.read_csv(data_url)

@@ -227,9 +227,9 @@ def main():
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("Historical Stock Data")
-            historical_data = fetch_stock_data(ticker)
-            st.write(historical_data)
+            st.subheader("Live NIFTYENERGY Stock Data")
+            niftyenergy_data = fetch_niftyenergy_live_data()
+            st.write(niftyenergy_data)
         
         with col2:
             st.subheader("About Nifty Energy Index")

@@ -247,12 +247,10 @@ def main():
         
         with col1:
             st.subheader("Dummy Data Column 1")
-            st.write("This is some dummy data for column 1 on Page 1.")
             st.write("You can update this section with actual data or visualizations.")
         
         with col2:
             st.subheader("Dummy Data Column 2")
-            st.write("This is some dummy data for column 2 on Page 1.")
             st.write("You can update this section with actual data or visualizations.")
     
     if page == "Page 2":

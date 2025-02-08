@@ -250,7 +250,8 @@ def main():
 
             # Fetch current stock price
             current_price = fetch_current_stock_price(ticker)
-            st.markdown(f"<h4>Current Stock Price: ₹{current_price:.2f}</h4>", unsafe_allow_html=True)
+            #st.markdown(f"<h4>Current Stock Price: ₹{current_price:.2f}</h4>", unsafe_allow_html=True)
+            st.markdown(f"<h4 style='color: green;'>Current Stock Price: ₹{current_price:.2f}</h4>", unsafe_allow_html=True)
 
             # Perform prediction on page load
             opening_price_data = load_opening_price_data(ticker)

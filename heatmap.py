@@ -272,16 +272,15 @@ def main():
             st.write("You can update this section with actual data or visualizations.")
         
         with col2:
-            st.subheader("About Nift Energy Index")
+            st.subheader("About Nifty Energy Index")
             nift_energy_info = fetch_nift_energy_index_info()
-            st.text_area("Nift Energy Index Information", nift_energy_info, height=150)
+            st.text_area("Nifty Energy Index Information", nift_energy_info, height=150)
             
-            # Upload and display NIFTYENERGY_PERFORMANCE CSV file
-            st.subheader("NIFTYENERGY_PERFORMANCE CSV")
-            uploaded_file = st.file_uploader("Choose a file", type="csv")
-            if uploaded_file is not None:
-                df = pd.read_csv(uploaded_file)
-                st.write(df)
+            # Display NIFTYENERGY_Performance CSV file from the repository
+            st.subheader("NIFTYENERGY_Performance CSV")
+            csv_url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_Performance.csv"
+            df = pd.read_csv(csv_url)
+            st.write(df)
     
     if page == "Page 2":
         col1, col2, col3 = st.columns([4, 2.5, 2.5])

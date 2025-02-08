@@ -311,7 +311,7 @@ def main():
     with col2:
         st.subheader(f"About {company}")
         company_info = fetch_company_info(ticker)
-        st.text_area("Company Information", company_info, height=450)
+        st.text_area("Company Information", company_info, height=401)
 
         df_stock = fetch_stock_data(ticker)
         year_data = df_stock[df_stock.index.year == year]

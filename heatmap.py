@@ -119,7 +119,8 @@ def main():
 
         data_url = "https://raw.githubusercontent.com/SpartanKurt051/BFM/main/Heatmap.csv"
         df = pd.read_csv(data_url)
-        df.columns are stripped of whitespace
+        #df.columns are stripped of whitespace
+        df.columns = df.columns.str.strip()
         df.set_index('Company', inplace=True)
 
         num_companies = df.shape[0]

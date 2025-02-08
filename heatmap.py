@@ -311,7 +311,7 @@ def main():
     with col2:
         st.subheader(f"About {company}")
         company_info = fetch_company_info(ticker)
-        st.text_area("Company Information", company_info, height=150)
+        st.text_area("Company Information", company_info, height=300)
 
         df_stock = fetch_stock_data(ticker)
         year_data = df_stock[df_stock.index.year == year]
@@ -360,7 +360,7 @@ def main():
         news_text = ""
         for article in news_articles:
             news_text += f"{article['title']}: {article['description']}\n\n"
-        st.text_area(f"Latest updates about {company}", news_text, height=150)
+        st.text_area(f"Latest updates about {company}", news_text, height=300)
 
         st.subheader("Buying & Selling Decision")
         plot_buying_decision(company, filtered_data)

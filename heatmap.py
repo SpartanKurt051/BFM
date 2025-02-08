@@ -258,7 +258,7 @@ def main():
         news_text = ""
         for article in news_articles:
             news_text += f"{article['title']}: {article['description']}\n\n"
-        st.text_area("Live News", news_text, height=201) 
+        st.text_area("Live News", news_text, height=395) 
         
         st.subheader("NIFTYENERGY_Performance CSV")
         csv_url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_Performance.csv"
@@ -311,7 +311,7 @@ def main():
     with col2:
         st.subheader(f"About {company}")
         company_info = fetch_company_info(ticker)
-        st.text_area("Company Information", company_info, height=401)
+        st.text_area("Company Information", company_info, height=395)
 
         df_stock = fetch_stock_data(ticker)
         year_data = df_stock[df_stock.index.year == year]

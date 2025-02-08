@@ -281,7 +281,9 @@ def main():
             csv_url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_Performance.csv"
             df = pd.read_csv(csv_url)
             
-            # Remove content of cells showing "Unnamed: 1" and "Unnamed 3"
+            # Merge specific cells of the 'Unnamed' columns with the previous ones
+            df["TOP PERFORMING"] = df["TOP PERFORMING"].fillna("") + " " + df["Unnamed: 1"].fillna("")
+            df["UNDER PERFORMING"] = df["UNDER PERFORMING"].fillna("") + " " + df["Unnamed: 3"].fillna("")
             df = df.drop(columns=["Unnamed: 1", "Unnamed: 3"], errors='ignore')
             st.write(df)
     

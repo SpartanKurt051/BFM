@@ -305,7 +305,7 @@ def main():
         st.text_area("Company Information", company_info, height=150)
 
         df_stock = fetch_stock_data(ticker)
-        year_data = df_stock[df_stock.index.year == year)
+        year_data = df_stock[df_stock.index.year == year]
         
         st.subheader("Company Weightage Heatmap")
 

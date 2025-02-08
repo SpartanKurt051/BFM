@@ -201,7 +201,7 @@ def plot_buying_decision(company_name, data):
 
 # Main function
 def main():
-    st.markdown("<h1 style='text-align: center; color: maroon;'>📈 Stock Market Dashboard</h1>", unsafe_allow_html=True)
+    st.title("📈 Stock Market Dashboard")
     
     # Sidebar
     st.sidebar.header("Select Company")
@@ -258,7 +258,7 @@ def main():
         news_text = ""
         for article in news_articles:
             news_text += f"{article['title']}: {article['description']}\n\n"
-        st.text_area("Live News", news_text, height=395) 
+        st.text_area("Live News", news_text, height=201) 
         
         st.subheader("NIFTYENERGY_Performance CSV")
         csv_url = "https://github.com/SpartanKurt051/BFM/raw/main/NIFTYENERGY_Performance.csv"
@@ -311,7 +311,7 @@ def main():
     with col2:
         st.subheader(f"About {company}")
         company_info = fetch_company_info(ticker)
-        st.text_area("Company Information", company_info, height=395)
+        st.text_area("Company Information", company_info, height=150)
 
         df_stock = fetch_stock_data(ticker)
         year_data = df_stock[df_stock.index.year == year]
@@ -360,7 +360,7 @@ def main():
         news_text = ""
         for article in news_articles:
             news_text += f"{article['title']}: {article['description']}\n\n"
-        st.text_area(f"Latest updates about {company}", news_text, height=300)
+        st.text_area(f"Latest updates about {company}", news_text, height=150)
 
         st.subheader("Buying & Selling Decision")
         plot_buying_decision(company, filtered_data)

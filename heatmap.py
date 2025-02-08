@@ -139,7 +139,7 @@ def plot_actual_vs_predicted(company_name, file_name):
     if (specific_date in data.index):
         actual_price = data.loc[specific_date, 'Actual Price']
         predicted_price = data.loc[specific_date, 'Predicted Price']
-        error_percentage = abs((actual_price - predicted_price) / actual_price) * 100
+        error_percentage = abs((actual_price - predicted_price) / actual price) * 100
         error_text = f"Error percentage as on January 24, 2025: {error_percentage:.2f}%"
     else:
         error_text = "No data for January 24, 2025"
@@ -182,7 +182,7 @@ def plot_buying_decision(company_name, data):
 
     # Compare each day's opening price with the previous day's price
     colors = ['red' if data['Opening Price'].iloc[i] < data['Opening Price'].iloc[i - 1] else 'green' for i in range(1, len(data))]
-    colors.insert(0, 'red')  # Initial day color
+    colors insert(0, 'red')  # Initial day color
 
     # Add trace for opening prices with color based on comparison
     fig.add_trace(go.Scatter(x=data['Date'], y=data['Opening Price'], mode='lines+markers', name='Opening Price',
@@ -199,7 +199,6 @@ def plot_buying_decision(company_name, data):
     # Use Streamlit to display the plot
     st.plotly_chart(fig)
 
-# Main function
 # Main function
 def main():
     st.title("📈 Stock Market Dashboard")
@@ -262,7 +261,7 @@ def main():
     with col1:
         # Display key financial metrics in horizontal format next to the title
         metrics_html = (
-            f"<div style='float: right; color: goldenrod; white-space: nowrap; animation: scroll-left 10s linear infinite;'>"
+            f"<div style='float: right; color: goldenrod; white-space: nowrap; animation: scroll-left 10s linear infinite; font-size: 20px;'>"
             f"<span>EPS:</span> <span>{eps_pe_ipo_kpi['EPS']}</span> &nbsp;&nbsp;"
             f"<span>PE Ratio:</span> <span>{eps_pe_ipo_kpi['PE Ratio']}</span> &nbsp;&nbsp;"
             f"<span>IPO Date:</span> <span>{eps_pe_ipo_kpi['IPO Date']}</span> &nbsp;&nbsp;"
@@ -322,7 +321,7 @@ def main():
         padded_weights = np.pad(df['Weight'].values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values=np.nan)
         padded_companies = np.pad(df.index.values, (0, num_rows * num_cols - num_companies), mode='constant', constant_values='')
 
-        heatmap_data = padded_weights.reshape(num_rows, num_cols)
+        heatmap_data = padded_weights.reshape(num_rows, num cols)
         hovertext = np.array([f"{company}<br>Weight: {weight:.2f}<br>Rank: {rank+1}" for rank, (company, weight) in enumerate(zip(padded_companies, padded_weights))]).reshape(num_rows, num_cols)
 
         fig = go.Figure(data=go.Heatmap(
@@ -337,7 +336,7 @@ def main():
         fig.update_layout(
             title='Company Weightage Heatmap',
             xaxis=dict(showticklabels=False),
-            yaxis=dict(showticklabels=False),
+            yaxis=dict(showticklabels(False),
             height=501,
         )
 

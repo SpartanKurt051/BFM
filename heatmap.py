@@ -365,5 +365,5 @@ def main():
         st.subheader("Buying & Selling Decision")
         plot_buying_decision(company, filtered_data)
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     main()

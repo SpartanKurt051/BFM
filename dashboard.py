@@ -55,8 +55,8 @@ def fetch_fundamental_data(ticker):
             "Net Cash Flow": net_cashflow
         }
         fundamental_data.append(data)
-    
-    return pd.DataFrame(fundamental_data)
+    return fundamental_data
+    #return pd.DataFrame(fundamental_data)
 
 @st.cache_data
 def fetch_live_news(api_key, query):

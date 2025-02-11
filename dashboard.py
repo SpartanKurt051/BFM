@@ -67,7 +67,6 @@ def fetch_live_news(api_key, query):
     return news_data['articles'] if 'articles' in news_data else []
 
 @st.cache_data
-@st.cache_data
 def fetch_eps_pe_ipo_kpi(ticker):
     stock = yf.Ticker(ticker)
     info = stock.info
@@ -89,12 +88,12 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "EPS": info.get("trailingEps"),
         "PE Ratio": info.get("trailingPE"),
         "IPO Date": ipo_dates.get(ticker, "N/A"),
-        "IPO Price": ipo_prices.get(ticker, "N/A"),
-        "Current Price": info.get("regularMarketPrice"),
-        "High": info.get("dayHigh"),
-        "Low": info.get("dayLow"),
-        "Open": info.get("open"),
-        "Previous Close": info.get("previousClose"),
+        "IPO Price": "Rs " + str(ipo_prices.get(ticker, "N/A")),
+        "Current Price": "Rs " + str(info.get("regularMarketPrice")),
+        "High": "Rs " + str(info.get("dayHigh")),
+        "Low": "Rs " + str(info.get("dayLow")),
+        "Open": "Rs " + str(info.get("open")),
+        "Previous Close": "Rs " + str(info.get("previousClose")),
         "KPI": info.get("kpi")
     }
     return data
@@ -130,6 +129,7 @@ def fetch_alternative_kpi_ipo(ticker, api_key):
     data = response.json()
     return {
         "IPO Date": data.get("IPODate", "N/A"),
+        "KPI": data.get("ProfitMargin", "N/A")  # Assuming KPI is represented by Profit Margin
     }
 
 # Plot actual vs predicted prices
@@ -197,6 +197,10 @@ def plot_buying_decision(company_name, data):
     fig.add_trace(go.Scatter(x=data['Date'], y=data['Opening Price'], mode='lines+markers', name='Opening Price',
                              marker=dict(color=colors)))
 
+    # Add legend entries for Buy and Sell
+    fig.add_trace(go.Scatter(x=[None], y=[None], mode='markers', marker=dict(color='red'), name='Buy'))
+    fig.add_trace(go.Scatter(x=[None], y=[None], mode='markers', marker=dict(color='green'), name='Sell'))
+
     # Update layout with titles and labels
     fig.update_layout(
         title=f'{company_name} - Buying & Selling Decision',
@@ -233,7 +237,7 @@ def main():
     with col1_3:
         csv_data = load_nifty_energy_csv()
         fig = go.Figure(data=[go.Scatter(x=csv_data['Date'], y=csv_data['Open'], mode='lines', name='Open')])
-        fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Date', yaxis_title='Open Price')
+        fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Year', yaxis_title='Open Price')
         st.plotly_chart(fig)
         
         st.subheader("Historical Stock Data of NIFTY ENERGY Index")
@@ -242,7 +246,7 @@ def main():
     with col2_3:
         st.subheader("About Nifty Energy Index")
         nift_energy_info = """
-        The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India. The Nifty Energy Index comprises of[...[...]
+        The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India.
 
         The base date of the Nifty Energy Index is April 01, 2005 and base value is 1000.
 
@@ -288,6 +292,7 @@ def main():
             f"<span>Low:</span> <span>{eps_pe_ipo_kpi['Low']}</span> &nbsp;&nbsp;"
             f"<span>Open:</span> <span>{eps_pe_ipo_kpi['Open']}</span> &nbsp;&nbsp;"
             f"<span>Close:</span> <span>{eps_pe_ipo_kpi['Previous Close']}</span> &nbsp;&nbsp;"
+            f"<span>KPI:</span> <span>{eps_pe_ipo_kpi['KPI']}</span>"
             f"</div>"
         )
         st.markdown(metrics_html, unsafe_allow_html=True)

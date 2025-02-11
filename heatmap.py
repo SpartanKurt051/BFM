@@ -40,7 +40,6 @@ def fetch_fundamental_data(ticker):
     for date in dates:
         try:
             total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            #debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance[...]
             debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index) else None
             net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
         except Exception:
@@ -266,8 +265,8 @@ def main():
         df = pd.read_csv(csv_url)
         st.write(df)
     
-    col1, col2, col3 = st.columns([4, 2.5, 2.5])
-    
+    col1, col2_3 = st.columns([1, 2])
+
     with col1:
         # Display key financial metrics in horizontal format next to the title
         metrics_html = (
@@ -308,15 +307,8 @@ def main():
         st.subheader("Opening Price Data")
         filtered_data = opening_price_data[opening_price_data['Year'] == year]
         st.dataframe(filtered_data, height=200)
-        
-    with col2:
-        st.subheader(f"About {company}")
-        company_info = fetch_company_info(ticker)
-        st.text_area("Company Information", company_info, height=150)
 
-        df_stock = fetch_stock_data(ticker)
-        year_data = df_stock[df_stock.index.year == year]
-        
+    with col2_3:
         st.subheader("Top 10 Company's Weightage in NSE Heatmap")
 
         data_url = "https://raw.githubusercontent.com/SpartanKurt051/BFM/main/Heatmap.csv"
@@ -356,7 +348,7 @@ def main():
         st.subheader("Buying & Selling Decision")
         plot_buying_decision(company, filtered_data)
 
-    with col3:
+    with col1:
         st.subheader("Live News")
         news_api_key = "31739ed855eb4759908a898ab99a43e7"
         query = company

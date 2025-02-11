@@ -55,6 +55,7 @@ def fetch_fundamental_data(ticker):
             "Net Cash Flow": net_cashflow
         }
         fundamental_data.append(data)
+    
     return pd.DataFrame(fundamental_data)
 
 @st.cache_data
@@ -92,7 +93,7 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "High": "Rs " + str(info.get("dayHigh")),
         "Low": "Rs " + str(info.get("dayLow")),
         "Open": "Rs " + str(info.get("open")),
-        "Previous Close": "Rs " + str(info.get("previousClose")),
+        "Previous Close": "Rs " + str(info.get("previousClose"))
     }
     return data
 
@@ -127,7 +128,6 @@ def fetch_alternative_kpi_ipo(ticker, api_key):
     data = response.json()
     return {
         "IPO Date": data.get("IPODate", "N/A"),
-        "KPI": data.get("ProfitMargin", "N/A")  # Assuming KPI is represented by Profit Margin
     }
 
 # Plot actual vs predicted prices
@@ -229,6 +229,7 @@ def main():
 
     # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
     eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
+    
     col1_3, col2_3 = st.columns([2, 2])
     
     with col1_3:
@@ -289,7 +290,6 @@ def main():
             f"<span>Low:</span> <span>{eps_pe_ipo_kpi['Low']}</span> &nbsp;&nbsp;"
             f"<span>Open:</span> <span>{eps_pe_ipo_kpi['Open']}</span> &nbsp;&nbsp;"
             f"<span>Close:</span> <span>{eps_pe_ipo_kpi['Previous Close']}</span> &nbsp;&nbsp;"
-            f"<span>KPI:</span> <span>{eps_pe_ipo_kpi['KPI']}</span>"
             f"</div>"
         )
         st.markdown(metrics_html, unsafe_allow_html=True)

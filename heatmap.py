@@ -193,7 +193,7 @@ def plot_buying_decision(company_name, data):
     # Update layout with titles and labels
     fig.update_layout(
         title=f'{company_name} - Buying & Selling Decision',
-        xaxis_title='Date',
+        xaxis_title='Month',
         yaxis_title='Opening Price',
         hovermode='x unified'
     )

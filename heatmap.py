@@ -67,7 +67,6 @@ def fetch_live_news(api_key, query):
     return news_data['articles'] if 'articles' in news_data else []
 
 @st.cache_data
-@st.cache_data
 def fetch_eps_pe_ipo_kpi(ticker):
     stock = yf.Ticker(ticker)
     info = stock.info
@@ -94,7 +93,8 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "High": "Rs " + str(info.get("dayHigh")),
         "Low": "Rs " + str(info.get("dayLow")),
         "Open": "Rs " + str(info.get("open")),
-        "Previous Close": "Rs " + str(info.get("previousClose"))
+        "Previous Close": "Rs " + str(info.get("previousClose")),
+        "KPI": info.get("kpi")
     }
     return data
 
@@ -129,6 +129,7 @@ def fetch_alternative_kpi_ipo(ticker, api_key):
     data = response.json()
     return {
         "IPO Date": data.get("IPODate", "N/A"),
+        "KPI": data.get("ProfitMargin", "N/A")  # Assuming KPI is represented by Profit Margin
     }
 
 # Plot actual vs predicted prices
@@ -195,6 +196,10 @@ def plot_buying_decision(company_name, data):
     # Add trace for opening prices with color based on comparison
     fig.add_trace(go.Scatter(x=data['Date'], y=data['Opening Price'], mode='lines+markers', name='Opening Price',
                              marker=dict(color=colors)))
+
+    # Add legend entries for Buy and Sell
+    fig.add_trace(go.Scatter(x=[None], y=[None], mode='markers', marker=dict(color='red'), name='Buy'))
+    fig.add_trace(go.Scatter(x=[None], y=[None], mode='markers', marker=dict(color='green'), name='Sell'))
 
     # Update layout with titles and labels
     fig.update_layout(
@@ -287,6 +292,7 @@ def main():
             f"<span>Low:</span> <span>{eps_pe_ipo_kpi['Low']}</span> &nbsp;&nbsp;"
             f"<span>Open:</span> <span>{eps_pe_ipo_kpi['Open']}</span> &nbsp;&nbsp;"
             f"<span>Close:</span> <span>{eps_pe_ipo_kpi['Previous Close']}</span> &nbsp;&nbsp;"
+            f"<span>KPI:</span> <span>{eps_pe_ipo_kpi['KPI']}</span>"
             f"</div>"
         )
         st.markdown(metrics_html, unsafe_allow_html=True)

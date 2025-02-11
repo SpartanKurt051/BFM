@@ -67,6 +67,7 @@ def fetch_live_news(api_key, query):
     return news_data['articles'] if 'articles' in news_data else []
 
 @st.cache_data
+@st.cache_data
 def fetch_eps_pe_ipo_kpi(ticker):
     stock = yf.Ticker(ticker)
     info = stock.info
@@ -77,16 +78,24 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "NHPC.NS": "August 2009",
         "POWERGRID.NS": "October 2007"
     }
+    ipo_prices = {
+        "ADANIGREEN.NS": 29,
+        "JSWENERGY.NS": 100,
+        "NTPC.NS": 62,
+        "NHPC.NS": 36,
+        "POWERGRID.NS": 52
+    }
     data = {
         "EPS": info.get("trailingEps"),
         "PE Ratio": info.get("trailingPE"),
         "IPO Date": ipo_dates.get(ticker, "N/A"),
+        "IPO Price": ipo_prices.get(ticker, "N/A"),
         "Current Price": info.get("regularMarketPrice"),
         "High": info.get("dayHigh"),
         "Low": info.get("dayLow"),
         "Open": info.get("open"),
         "Previous Close": info.get("previousClose"),
-        "IPO Price": "N/A"  # IPO price can be manually added if known
+        "KPI": info.get("kpi")
     }
     return data
 

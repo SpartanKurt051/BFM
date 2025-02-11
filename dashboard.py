@@ -55,8 +55,7 @@ def fetch_fundamental_data(ticker):
             "Net Cash Flow": net_cashflow
         }
         fundamental_data.append(data)
-    return fundamental_data
-    #return pd.DataFrame(fundamental_data)
+    return pd.DataFrame(fundamental_data)
 
 @st.cache_data
 def fetch_live_news(api_key, query):
@@ -94,7 +93,6 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "Low": "Rs " + str(info.get("dayLow")),
         "Open": "Rs " + str(info.get("open")),
         "Previous Close": "Rs " + str(info.get("previousClose")),
-        "KPI": info.get("kpi")
     }
     return data
 
@@ -231,7 +229,6 @@ def main():
 
     # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
     eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-    print(fetch_fundamental_data(ticker))
     col1_3, col2_3 = st.columns([2, 2])
     
     with col1_3:

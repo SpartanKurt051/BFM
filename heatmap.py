@@ -246,7 +246,7 @@ def main():
     with col2_3:
         st.subheader("About Nifty Energy Index")
         nift_energy_info = """
-        The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India. The Nifty Energy Index comprises of[...[...]
+        The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India.
 
         The base date of the Nifty Energy Index is April 01, 2005 and base value is 1000.
 

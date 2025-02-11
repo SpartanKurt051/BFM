@@ -231,7 +231,7 @@ def main():
 
     # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
     eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
-    
+    print(fetch_fundamental_data(ticker))
     col1_3, col2_3 = st.columns([2, 2])
     
     with col1_3:

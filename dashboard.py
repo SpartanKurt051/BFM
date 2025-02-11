@@ -67,6 +67,7 @@ def fetch_live_news(api_key, query):
     return news_data['articles'] if 'articles' in news_data else []
 
 @st.cache_data
+@st.cache_data
 def fetch_eps_pe_ipo_kpi(ticker):
     stock = yf.Ticker(ticker)
     info = stock.info
@@ -77,17 +78,24 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "NHPC.NS": "August 2009",
         "POWERGRID.NS": "October 2007"
     }
+    ipo_prices = {
+        "ADANIGREEN.NS": 29,
+        "JSWENERGY.NS": 100,
+        "NTPC.NS": 62,
+        "NHPC.NS": 36,
+        "POWERGRID.NS": 52
+    }
     data = {
         "EPS": info.get("trailingEps"),
         "PE Ratio": info.get("trailingPE"),
         "IPO Date": ipo_dates.get(ticker, "N/A"),
-        "KPI": info.get("kpi"),
+        "IPO Price": ipo_prices.get(ticker, "N/A"),
         "Current Price": info.get("regularMarketPrice"),
         "High": info.get("dayHigh"),
         "Low": info.get("dayLow"),
         "Open": info.get("open"),
         "Previous Close": info.get("previousClose"),
-        "IPO Price": "N/A"  # IPO price can be manually added if known
+        "KPI": info.get("kpi")
     }
     return data
 
@@ -122,7 +130,6 @@ def fetch_alternative_kpi_ipo(ticker, api_key):
     data = response.json()
     return {
         "IPO Date": data.get("IPODate", "N/A"),
-        "KPI": data.get("ProfitMargin", "N/A")  # Assuming KPI is represented by Profit Margin
     }
 
 # Plot actual vs predicted prices
@@ -156,7 +163,7 @@ def plot_actual_vs_predicted(company_name, file_name):
     # Update layout with titles and labels
     fig.update_layout(
         title=f'{company_name} - Actual vs Predicted Opening Prices',
-        xaxis_title='Date',
+        xaxis_title='Year',
         yaxis_title='Price',
         hovermode='x unified',
         width=1400,  # Increase width
@@ -193,7 +200,7 @@ def plot_buying_decision(company_name, data):
     # Update layout with titles and labels
     fig.update_layout(
         title=f'{company_name} - Buying & Selling Decision',
-        xaxis_title='Date',
+        xaxis_title='Month',
         yaxis_title='Opening Price',
         hovermode='x unified'
     )
@@ -281,7 +288,6 @@ def main():
             f"<span>Low:</span> <span>{eps_pe_ipo_kpi['Low']}</span> &nbsp;&nbsp;"
             f"<span>Open:</span> <span>{eps_pe_ipo_kpi['Open']}</span> &nbsp;&nbsp;"
             f"<span>Close:</span> <span>{eps_pe_ipo_kpi['Previous Close']}</span> &nbsp;&nbsp;"
-            f"<span>KPI:</span> <span>{eps_pe_ipo_kpi['KPI']}</span>"
             f"</div>"
         )
         st.markdown(metrics_html, unsafe_allow_html=True)

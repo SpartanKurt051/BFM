@@ -167,7 +167,9 @@ def plot_actual_vs_predicted(company_name, file_name):
         yaxis_title='Price',
         hovermode='x unified',
         width=1400,  # Increase width
-        height=600  # Increase height
+        height=600,  # Increase height
+        xaxis=dict(color='mauve'),
+        yaxis=dict(color='mauve')
     )
     
     # Update hover information
@@ -206,7 +208,9 @@ def plot_buying_decision(company_name, data):
         title=f'{company_name} - Buying & Selling Decision',
         xaxis_title='Month',
         yaxis_title='Opening Price',
-        hovermode='x unified'
+        hovermode='x unified',
+        xaxis=dict(color='mauve'),
+        yaxis=dict(color='mauve')
     )
 
     # Use Streamlit to display the plot
@@ -237,7 +241,7 @@ def main():
     with col1_3:
         csv_data = load_nifty_energy_csv()
         fig = go.Figure(data=[go.Scatter(x=csv_data['Date'], y=csv_data['Open'], mode='lines', name='Open')])
-        fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Year', yaxis_title='Open Price')
+        fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Year', yaxis_title='Open Price', xaxis=dict(color='mauve'), yaxis=dict(color='mauve'))
         st.plotly_chart(fig)
         
         st.subheader("Historical Stock Data of NIFTY ENERGY Index")
@@ -358,8 +362,8 @@ def main():
 
         fig.update_layout(
             title='Company Weightage Heatmap',
-            xaxis=dict(showticklabels=False),
-            yaxis=dict(showticklabels=False),
+            xaxis=dict(showticklabels=False, color='mauve'),
+            yaxis=dict(showticklabels=False, color='mauve'),
             height=501
         )
 

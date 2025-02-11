@@ -63,7 +63,7 @@ def main():
         df = pd.read_csv(csv_url)
         st.write(df)
     
-    col1, col2_3 = st.columns([1, 2])
+    col1, col2, col3 = st.columns([1, 2, 2])
 
     with col1:
         # Display key financial metrics in horizontal format next to the title
@@ -106,7 +106,7 @@ def main():
         filtered_data = opening_price_data[opening_price_data['Year'] == year]
         st.dataframe(filtered_data, height=200)
 
-    with col2_3:
+    with col2:
         st.subheader("Top 10 Company's Weightage in NSE Heatmap")
 
         data_url = "https://raw.githubusercontent.com/SpartanKurt051/BFM/main/Heatmap.csv"
@@ -143,6 +143,7 @@ def main():
 
         st.plotly_chart(fig)
 
+    with col3:
         st.subheader("Buying & Selling Decision")
         plot_buying_decision(company, filtered_data)
 

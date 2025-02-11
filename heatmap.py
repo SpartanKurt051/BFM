@@ -156,7 +156,7 @@ def plot_actual_vs_predicted(company_name, file_name):
     # Update layout with titles and labels
     fig.update_layout(
         title=f'{company_name} - Actual vs Predicted Opening Prices',
-        xaxis_title='Date',
+        xaxis_title='Year',
         yaxis_title='Price',
         hovermode='x unified',
         width=1400,  # Increase width

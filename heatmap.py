@@ -221,9 +221,9 @@ def main():
     # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
     eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
     
-    col1, col2 = st.columns(2)
+    col1_3, col2_3 = st.columns([2, 2])
     
-    with col1:
+    with col1_3:
         csv_data = load_nifty_energy_csv()
         fig = go.Figure(data=[go.Scatter(x=csv_data['Date'], y=csv_data['Open'], mode='lines', name='Open')])
         fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Date', yaxis_title='Open Price')
@@ -232,7 +232,7 @@ def main():
         st.subheader("Historical Stock Data of NIFTY ENERGY Index")
         st.write(csv_data)
         
-    with col2:
+    with col2_3:
         st.subheader("About Nifty Energy Index")
         nift_energy_info = """
         The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India. The Nifty Energy Index comprises of[...[...]
@@ -267,9 +267,9 @@ def main():
         df = pd.read_csv(csv_url)
         st.write(df)
     
-    col1, col2_3 = st.columns([1, 2])
+    col1_3, col2_3 = st.columns([2, 2])
 
-    with col1:
+    with col1_3:
         # Display key financial metrics in horizontal format next to the title
         metrics_html = (
             f"<div style='float: right; color: goldenrod; white-space: nowrap; animation: scroll-left 10s linear infinite; font-size: 20px;'>"

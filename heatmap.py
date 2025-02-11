@@ -237,7 +237,7 @@ def main():
     with col1_3:
         csv_data = load_nifty_energy_csv()
         fig = go.Figure(data=[go.Scatter(x=csv_data['Date'], y=csv_data['Open'], mode='lines', name='Open')])
-        fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Date', yaxis_title='Open Price')
+        fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Year', yaxis_title='Open Price')
         st.plotly_chart(fig)
         
         st.subheader("Historical Stock Data of NIFTY ENERGY Index")

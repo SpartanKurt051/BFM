@@ -128,7 +128,6 @@ def fetch_alternative_kpi_ipo(ticker, api_key):
     data = response.json()
     return {
         "IPO Date": data.get("IPODate", "N/A"),
-        "KPI": data.get("ProfitMargin", "N/A")  # Assuming KPI is represented by Profit Margin
     }
 
 # Plot actual vs predicted prices
@@ -291,7 +290,6 @@ def main():
             f"<span>Low:</span> <span>{eps_pe_ipo_kpi['Low']}</span> &nbsp;&nbsp;"
             f"<span>Open:</span> <span>{eps_pe_ipo_kpi['Open']}</span> &nbsp;&nbsp;"
             f"<span>Close:</span> <span>{eps_pe_ipo_kpi['Previous Close']}</span> &nbsp;&nbsp;"
-            f"<span>KPI:</span> <span>{eps_pe_ipo_kpi['KPI']}</span>"
             f"</div>"
         )
         st.markdown(metrics_html, unsafe_allow_html=True)

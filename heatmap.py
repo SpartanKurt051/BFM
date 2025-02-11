@@ -158,7 +158,9 @@ def plot_actual_vs_predicted(company_name, file_name):
         title=f'{company_name} - Actual vs Predicted Opening Prices',
         xaxis_title='Date',
         yaxis_title='Price',
-        hovermode='x unified'
+        hovermode='x unified',
+        width=1000,  # Increase width
+        height=600  # Increase height
     )
     
     # Update hover information
@@ -306,7 +308,7 @@ def main():
         year = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
         st.subheader("Opening Price Data")
         filtered_data = opening_price_data[opening_price_data['Year'] == year]
-        st.dataframe(filtered_data, height=200)
+        st.dataframe(filtered_data, height=400)  # Increase the height of the dataframe display
 
     with col2_3:
         st.subheader("Live News")

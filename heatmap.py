@@ -89,7 +89,7 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "EPS": info.get("trailingEps"),
         "PE Ratio": info.get("trailingPE"),
         "IPO Date": ipo_dates.get(ticker, "N/A"),
-        "IPO Price": ipo_prices.get(ticker, "N/A"),
+        "IPO Price": "Rs" + str(ipo_prices.get(ticker, "N/A")),
         "Current Price": info.get("regularMarketPrice"),
         "High": info.get("dayHigh"),
         "Low": info.get("dayLow"),

@@ -309,12 +309,19 @@ def main():
         st.dataframe(filtered_data, height=200)
 
     with col2_3:
-        st.subheader("Top 10 Company's Weightage in NSE Heatmap")
+        st.subheader("Live News")
+        news_api_key = "31739ed855eb4759908a898ab99a43e7"
+        query = company
+        news_articles = fetch_live_news(news_api_key, query)
+        news_text = ""
+        for article in news_articles:
+            news_text += f"{article['title']}: {article['description']}\n\n"
+        st.text_area(f"Latest updates about {company}", news_text, height=150)
 
+        st.subheader("Top 10 Company's Weightage in NSE Heatmap")
         data_url = "https://raw.githubusercontent.com/SpartanKurt051/BFM/main/Heatmap.csv"
         df = pd.read_csv(data_url)
-        #df.columns are stripped of whitespace
-        df.columns = df.columns.str.strip()
+        df.columns = df.columns.str.strip()  # Strip any whitespace or special characters
         df.set_index('Company', inplace=True)
 
         num_companies = df.shape[0]
@@ -347,16 +354,6 @@ def main():
 
         st.subheader("Buying & Selling Decision")
         plot_buying_decision(company, filtered_data)
-
-    with col1:
-        st.subheader("Live News")
-        news_api_key = "31739ed855eb4759908a898ab99a43e7"
-        query = company
-        news_articles = fetch_live_news(news_api_key, query)
-        news_text = ""
-        for article in news_articles:
-            news_text += f"{article['title']}: {article['description']}\n\n"
-        st.text_area(f"Latest updates about {company}", news_text, height=150)
 
 if __name__ == "__main__":
     main()

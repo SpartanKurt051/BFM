@@ -40,7 +40,7 @@ def fetch_fundamental_data(ticker):
     for date in dates:
         try:
             total_revenue = financials.loc["Total Revenue"].get(date.strftime("%Y-%m-%d"), None) if "Total Revenue" in financials.index else None
-            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance_sheet.index and "Total Equity" in balance_sheet.index) else None
+            debt_to_equity = (balance_sheet.loc["Total Debt"].get(date.strftime("%Y-%m-%d"), None) / balance_sheet.loc["Total Equity"].get(date.strftime("%Y-%m-%d"), None)) if ("Total Debt" in balance[...]
             net_cashflow = cashflow.loc["Total Cash From Operating Activities"].get(date.strftime("%Y-%m-%d"), None) if "Total Cash From Operating Activities" in cashflow.index else None
         except Exception:
             total_revenue, debt_to_equity, net_cashflow = None, None, None
@@ -233,7 +233,7 @@ def main():
     with col2:
         st.subheader("About Nifty Energy Index")
         nift_energy_info = """
-        The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India. The Nifty Energy Index comprises of[...]
+        The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India. The Nifty Energy Index comprises of[...[...]
 
         The base date of the Nifty Energy Index is April 01, 2005 and base value is 1000.
 
@@ -314,7 +314,7 @@ def main():
         st.text_area("Company Information", company_info, height=150)
 
         df_stock = fetch_stock_data(ticker)
-        year_data = df_stock[df_stock.index.year == year]
+        year_data = df_stock[df_stock.index.year == year)
         
         st.subheader("Top 10 Company's Weightage in NSE Heatmap")
 
@@ -352,6 +352,9 @@ def main():
 
         st.plotly_chart(fig)
 
+        st.subheader("Buying & Selling Decision")
+        plot_buying_decision(company, filtered_data)
+
     with col3:
         st.subheader("Live News")
         news_api_key = "31739ed855eb4759908a898ab99a43e7"
@@ -361,9 +364,6 @@ def main():
         for article in news_articles:
             news_text += f"{article['title']}: {article['description']}\n\n"
         st.text_area(f"Latest updates about {company}", news_text, height=150)
-
-        st.subheader("Buying & Selling Decision")
-        plot_buying_decision(company, filtered_data)
 
 if __name__ == "__main__":
     main()

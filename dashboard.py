@@ -158,7 +158,9 @@ def plot_actual_vs_predicted(company_name, file_name):
         title=f'{company_name} - Actual vs Predicted Opening Prices',
         xaxis_title='Date',
         yaxis_title='Price',
-        hovermode='x unified'
+        hovermode='x unified',
+        width=1400,  # Increase width
+        height=600  # Increase height
     )
     
     # Update hover information
@@ -219,9 +221,9 @@ def main():
     # Fetch EPS, PE Ratio, IPO Price, High, Low, Open, Close, KPI
     eps_pe_ipo_kpi = fetch_eps_pe_ipo_kpi(ticker)
     
-    col1, col2 = st.columns(2)
+    col1_3, col2_3 = st.columns([2, 2])
     
-    with col1:
+    with col1_3:
         csv_data = load_nifty_energy_csv()
         fig = go.Figure(data=[go.Scatter(x=csv_data['Date'], y=csv_data['Open'], mode='lines', name='Open')])
         fig.update_layout(title='NIFTY ENERGY Index - Open Prices', xaxis_title='Date', yaxis_title='Open Price')
@@ -230,10 +232,10 @@ def main():
         st.subheader("Historical Stock Data of NIFTY ENERGY Index")
         st.write(csv_data)
         
-    with col2:
+    with col2_3:
         st.subheader("About Nifty Energy Index")
         nift_energy_info = """
-        The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India. The Nifty Energy Index comprises of[...]
+        The Nifty Energy Index is designed to reflect the behavior and performance of the companies that represent the petroleum, gas and power sector in India. The Nifty Energy Index comprises of[...[...]
 
         The base date of the Nifty Energy Index is April 01, 2005 and base value is 1000.
 
@@ -265,9 +267,9 @@ def main():
         df = pd.read_csv(csv_url)
         st.write(df)
     
-    col1, col2, col3 = st.columns([4, 2.5, 2.5])
-    
-    with col1:
+    col1_3, col2_3 = st.columns([2, 2])
+
+    with col1_3:
         # Display key financial metrics in horizontal format next to the title
         metrics_html = (
             f"<div style='float: right; color: goldenrod; white-space: nowrap; animation: scroll-left 10s linear infinite; font-size: 20px;'>"
@@ -306,22 +308,22 @@ def main():
         year = st.selectbox("Select Year", [2020, 2021, 2022, 2023, 2024, 2025])
         st.subheader("Opening Price Data")
         filtered_data = opening_price_data[opening_price_data['Year'] == year]
-        st.dataframe(filtered_data, height=200)
-        
-    with col2:
-        st.subheader(f"About {company}")
-        company_info = fetch_company_info(ticker)
-        st.text_area("Company Information", company_info, height=150)
+        st.dataframe(filtered_data, width=1400, height=400)  # Increase the width and height of the dataframe display
 
-        df_stock = fetch_stock_data(ticker)
-        year_data = df_stock[df_stock.index.year == year]
-        
+    with col2_3:
+        st.subheader("Live News")
+        news_api_key = "31739ed855eb4759908a898ab99a43e7"
+        query = company
+        news_articles = fetch_live_news(news_api_key, query)
+        news_text = ""
+        for article in news_articles:
+            news_text += f"{article['title']}: {article['description']}\n\n"
+        st.text_area(f"Latest updates about {company}", news_text, height=150)
+
         st.subheader("Top 10 Company's Weightage in NSE Heatmap")
-
         data_url = "https://raw.githubusercontent.com/SpartanKurt051/BFM/main/Heatmap.csv"
         df = pd.read_csv(data_url)
-        #df.columns are stripped of whitespace
-        df.columns = df.columns.str.strip()
+        df.columns = df.columns.str.strip()  # Strip any whitespace or special characters
         df.set_index('Company', inplace=True)
 
         num_companies = df.shape[0]
@@ -351,16 +353,6 @@ def main():
         )
 
         st.plotly_chart(fig)
-
-    with col3:
-        st.subheader("Live News")
-        news_api_key = "31739ed855eb4759908a898ab99a43e7"
-        query = company
-        news_articles = fetch_live_news(news_api_key, query)
-        news_text = ""
-        for article in news_articles:
-            news_text += f"{article['title']}: {article['description']}\n\n"
-        st.text_area(f"Latest updates about {company}", news_text, height=150)
 
         st.subheader("Buying & Selling Decision")
         plot_buying_decision(company, filtered_data)

@@ -93,8 +93,7 @@ def fetch_eps_pe_ipo_kpi(ticker):
         "High": "Rs " + str(info.get("dayHigh")),
         "Low": "Rs " + str(info.get("dayLow")),
         "Open": "Rs " + str(info.get("open")),
-        "Previous Close": "Rs " + str(info.get("previousClose")),
-        "KPI": info.get("kpi")
+        "Previous Close": "Rs " + str(info.get("previousClose"))
     }
     return data
 
